@@ -3,6 +3,7 @@ import os
 from aiohttp import web
 from aiohttp.web_routedef import RouteDef
 
+from src import services
 from src.context import Context
 
 
@@ -26,4 +27,8 @@ class Handlers:
         link = data.get("link")
         if not link:
             raise web.HTTPBadRequest(reason="link is required.")
-        return web.json_response({"link": ""}, status=200)
+
+        file = await services.download_file(self.context, link)
+        file.name = file.name if not data.get("name") else data.get("name")
+        file_name = await services.save_file(self.context, file)
+        return web.json_response({"link": file_name}, status=200)
