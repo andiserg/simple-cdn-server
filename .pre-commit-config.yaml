@@ -33,3 +33,7 @@ repos:
       - id: flake8
         files: src
         args: ["--extend-ignore=B008"]
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: ''
+    hooks:
+      - id: mypy
