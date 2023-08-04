@@ -17,3 +17,9 @@ class AFileManager(ABC):
     @abstractmethod
     async def delete_file(self, files_dir, file_name: str):
         pass
+
+
+class AEnvManager(ABC):
+    @abstractmethod
+    async def get(self, key: str) -> str:
+        pass

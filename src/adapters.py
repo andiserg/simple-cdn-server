@@ -52,3 +52,8 @@ class FileManager(abstract.AFileManager):
         basename = "".join(choices(string.ascii_letters + string.digits, k=5))
         suffix = int(datetime.now().timestamp())
         return f"{basename}_{suffix}"
+
+
+class EnvManager(abstract.AEnvManager):
+    async def get(self, key: str) -> str:
+        return os.environ.get(key)
