@@ -10,7 +10,6 @@ from src.context import Context
 def get_handlers(context: Context) -> list[RouteDef]:
     handlers = Handlers(context)
     return [
-        web.get("/", handlers.get_zone),
         web.post("/files/", handlers.download_file_handler),
     ]
 
