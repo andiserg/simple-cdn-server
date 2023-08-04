@@ -4,4 +4,5 @@ from dataclasses import dataclass
 @dataclass
 class File:
     file_type: str
-    file_content: bytes
+    content: bytes
+    name: str | None = None
