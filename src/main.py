@@ -1,7 +1,15 @@
 from aiohttp import web
 
-from routes import get_routes
+from src.context import Context
+from src.routes import get_handlers
 
-app = web.Application()
-app.add_routes(get_routes())
-web.run_app(app)
+
+def init_app() -> web.Application:
+    context = Context()
+    app = web.Application()
+    handlers = get_handlers(context)
+    app.add_routes(handlers)
+    return app
+
+
+web.run_app(init_app())
