@@ -1,11 +1,18 @@
 import pytest
+from aiohttp import web
 from aiohttp.test_utils import TestClient
 
-from src.main import init_app
+from src.context import Context
+from src.routes import get_handlers
 
 
 @pytest.fixture()
 def cli(event_loop, aiohttp_client) -> TestClient:
     """Getting the client for server testing."""
-    app = init_app()
+    # Note: This is a duplicate of the code in main.py.
+    # If you call init_app(), pytest will hang during execution.
+    context = Context()
+    app = web.Application()
+    handlers = get_handlers(context)
+    app.add_routes(handlers)
     return event_loop.run_until_complete(aiohttp_client(app))
