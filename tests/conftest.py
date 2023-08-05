@@ -16,3 +16,8 @@ def cli(event_loop, aiohttp_client) -> TestClient:
     handlers = get_handlers(context)
     app.add_routes(handlers)
     return event_loop.run_until_complete(aiohttp_client(app))
+
+
+@pytest.fixture()
+def context() -> Context:
+    return Context()
