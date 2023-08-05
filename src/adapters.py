@@ -5,6 +5,7 @@ from pathlib import Path
 from random import choices
 
 import aiofiles
+from aiofiles import os as aios
 from aiohttp import ClientSession
 
 from src.abstract import adapters as abstract
@@ -37,7 +38,7 @@ class FileManager(abstract.AFileManager):
             return f"{filename}.{file.file_type}"
 
     async def delete_file(self, files_dir: Path, file_name: str):
-        pass
+        await aios.remove(files_dir / file_name)
 
     def generate_unique_filename(self) -> str:
         """Getting a unique file name in the format <random_part>_<timestamp>."""
