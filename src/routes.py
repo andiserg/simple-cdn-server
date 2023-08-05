@@ -1,4 +1,3 @@
-import json
 from datetime import datetime
 
 from aiohttp import web
@@ -44,4 +43,4 @@ class Handlers:
             "file_link": file_name,
             "origin_link": link,
         }
-        return web.Response(text=json.dumps(response), content_type="application/json")
+        return web.json_response(response, status=200)
