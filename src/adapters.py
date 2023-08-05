@@ -20,22 +20,14 @@ class WebClient(abstract.AWebClient):
 
 
 class FileManager(abstract.AFileManager):
-    async def save_file(
-        self, files_dir: Path, file: File, name: str | None = None
-    ) -> str:
+    async def save_file(self, files_dir: Path, file: File) -> str:
         """
         Saving the file in the system.
         :param files_dir: dir of files
         :param file: bytes
-        :param name: file name. If None, then generate
         :return: file name
         """
-        if name and os.path.exists(files_dir / name):
-            # If a file with the given name already exists,
-            # it means it has already been saved.
-            return name
-
-        filename = name if name else self.generate_unique_filename()
+        filename = file.name if file.name else self.generate_unique_filename()
         while os.path.exists(files_dir / filename):
             # If a file with that name already exists, generate a new one
             filename = self.generate_unique_filename()

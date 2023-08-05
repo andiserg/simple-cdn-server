@@ -30,8 +30,6 @@ class Handlers:
         async with timer:
             # downloading the content of the file
             file = await services.download_file(self.context, link)
-            # 'name' is passed in the case of file replication
-            file.name = file.name if not data.get("name") else data.get("name")
             # saving the file in the file system
             file_name = await services.save_file(self.context, file)
 
