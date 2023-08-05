@@ -11,7 +11,7 @@ class AWebClient(ABC):
 
 class AFileManager(ABC):
     @abstractmethod
-    async def save_file(self, files_dir, file: File, name: str):
+    async def save_file(self, files_dir, file: File):
         pass
 
     @abstractmethod

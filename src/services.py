@@ -12,12 +12,11 @@ async def download_file(context: Context, link: str) -> File:
     return await context.web.download_file(link)
 
 
-async def save_file(context: Context, file: File, name: str | None = None) -> str:
+async def save_file(context: Context, file: File) -> str:
     """
     Saving the file in the system and returning its name.
     :param context: Context instance
     :param file: bytes
-    :param name: file name. If None, then generate
     :return: file name
     """
-    return await context.files.save_file(context.FILES_DIR, file, name)
+    return await context.files.save_file(context.FILES_DIR, file)
