@@ -4,12 +4,12 @@ from aiohttp import web
 from aiohttp.web_routedef import RouteDef
 
 from src import utils
-from src.context import Context
+from src.abstract.context import AContext
 from src.services import commands
 from src.utils import get_unique_filename
 
 
-def get_handlers(context: Context) -> list[RouteDef]:
+def get_handlers(context: AContext) -> list[RouteDef]:
     handlers = Handlers(context)
     return [
         web.post("/files/", handlers.download_file_handler),
@@ -17,7 +17,7 @@ def get_handlers(context: Context) -> list[RouteDef]:
 
 
 class Handlers:
-    def __init__(self, context: Context):
+    def __init__(self, context: AContext):
         self.context = context
 
     async def download_file_handler(self, request: web.Request):

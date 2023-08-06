@@ -1,44 +1,36 @@
-from abc import ABC, abstractmethod
 from pathlib import Path
 
+from src.abstract import adapters as abstract
 from src.domain.model import File, Server
 
 
-class AWebClient(ABC):
-    @abstractmethod
-    async def download_file(self, link: str):
-        pass
+class FakeWebClient(abstract.AWebClient):
+    async def download_file(self, link: str) -> File:
+        return File(content=b"Hello world", file_type="txt", name="test")
 
-    @abstractmethod
     async def upload_file(self, server: Server, file: File, test: bool = False):
-        pass
+        return {"server": Server, "file": file}
 
-    @abstractmethod
     async def send_file_status(self, origin_url: str, file_name: str):
         pass
 
 
-class AFileManager(ABC):
-    @abstractmethod
+class FakeFileManager(abstract.AFileManager):
     async def save_file(self, files_dir, file: File):
-        pass
+        return f"{file.name}.{file.file_type}"
 
-    @abstractmethod
     async def delete_file(self, files_dir, file_name: str):
         pass
 
-    @abstractmethod
     async def is_file_exists(self, file_dir: Path, file_name: str) -> bool:
-        pass
+        return False
 
 
-class AEnvManager(ABC):
-    @abstractmethod
+class FakeEnvManager(abstract.AEnvManager):
     async def get(self, key: str) -> str:
         pass
 
 
-class AServersManager(ABC):
-    @abstractmethod
+class FakeServersManager(abstract.AServersManager):
     async def get_servers(self, root_dir: Path) -> list[Server]:
-        pass
+        return [Server(name="TestVPS", ip="test", zone="test_zone")]
