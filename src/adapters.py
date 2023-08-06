@@ -10,7 +10,7 @@ from aiofiles import os as aios
 from aiohttp import ClientSession
 
 from src.abstract import adapters as abstract
-from src.domain import File
+from src.domain import File, Server
 
 
 class WebClient(abstract.AWebClient):
@@ -19,6 +19,12 @@ class WebClient(abstract.AWebClient):
             async with session.get(link) as resp:
                 file_type = resp.content_type.split("/")[1]
                 return File(file_type, await resp.read())
+
+    async def upload_file(self, server: Server, file: File, test: bool = False) -> dict:
+        async with ClientSession() as session:
+            data = {"content": file.content, "name": file.name, "type": file.file_type}
+            async with session.post(f"http://{server.ip}:8080", data=data) as resp:
+                return {"server": server, "status": resp.status}
 
 
 class FileManager(abstract.AFileManager):
@@ -54,6 +60,9 @@ class EnvManager(abstract.AEnvManager):
 
 
 class ServersManager(abstract.AServersManager):
-    async def get_servers(self, root_dir: Path) -> list[dict]:
+    async def get_servers(self, root_dir: Path) -> list[Server]:
         with open(root_dir / "servers.json") as f:
-            return json.load(f)
+            servers = json.load(f)
+        return [
+            Server(server["name"], server["ip"], server["zone"]) for server in servers
+        ]

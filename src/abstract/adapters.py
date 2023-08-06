@@ -1,12 +1,16 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from src.domain import File
+from src.domain import File, Server
 
 
 class AWebClient(ABC):
     @abstractmethod
     async def download_file(self, link: str):
+        pass
+
+    @abstractmethod
+    async def upload_file(self, server: Server, file: File, test: bool = False):
         pass
 
 
@@ -28,5 +32,5 @@ class AEnvManager(ABC):
 
 class AServersManager(ABC):
     @abstractmethod
-    async def get_servers(self, root_dir: Path) -> list[dict]:
+    async def get_servers(self, root_dir: Path) -> list[Server]:
         pass
