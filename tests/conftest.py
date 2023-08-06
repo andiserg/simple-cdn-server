@@ -4,6 +4,7 @@ from aiohttp.test_utils import TestClient
 
 from src.context import Context
 from src.routes import get_handlers
+from tests.fake_src.context import FakeContext
 
 
 @pytest.fixture()
@@ -21,3 +22,8 @@ def cli(event_loop, aiohttp_client) -> TestClient:
 @pytest.fixture()
 def context() -> Context:
     return Context()
+
+
+@pytest.fixture()
+def fake_context() -> FakeContext:
+    return FakeContext()
