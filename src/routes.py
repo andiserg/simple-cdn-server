@@ -6,6 +6,7 @@ from aiohttp.web_routedef import RouteDef
 from src import utils
 from src.context import Context
 from src.services import commands
+from src.utils import get_unique_filename
 
 
 def get_handlers(context: Context) -> list[RouteDef]:
@@ -31,6 +32,10 @@ class Handlers:
         async with timer:
             # downloading the content of the file
             file = await commands.download_file(self.context, link)
+            # set file name if file.name is None
+            file.name = (
+                file.name if file.name else await get_unique_filename(self.context)
+            )
             # saving the file in the file system
             file_name = await commands.save_file(self.context, file)
 

@@ -8,7 +8,7 @@ class Event:
 
 
 @dataclass
-class FileDownloadedEvent(Event):
+class FileSavedEvent(Event):
     file: File
 
 

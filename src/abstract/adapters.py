@@ -23,6 +23,10 @@ class AFileManager(ABC):
     async def delete_file(self, files_dir, file_name: str):
         pass
 
+    @abstractmethod
+    async def is_file_exists(self, file_dir: Path, file_name: str) -> bool:
+        pass
+
 
 class AEnvManager(ABC):
     @abstractmethod

@@ -1,9 +1,6 @@
 import json
 import os
-import string
-from datetime import datetime
 from pathlib import Path
-from random import choices
 
 import aiofiles
 from aiofiles import os as aios
@@ -35,23 +32,17 @@ class FileManager(abstract.AFileManager):
         :param file: bytes
         :return: file name
         """
-        filename = file.name if file.name else self.generate_unique_filename()
-        while os.path.exists(files_dir / filename):
-            # If a file with that name already exists, generate a new one
-            filename = self.generate_unique_filename()
-
-        async with aiofiles.open(files_dir / f"{filename}.{file.file_type}", "wb") as f:
+        async with aiofiles.open(
+            files_dir / f"{file.name}.{file.file_type}", "wb"
+        ) as f:
             await f.write(file.content)
-            return f"{filename}.{file.file_type}"
+            return f"{file.name}.{file.file_type}"
 
     async def delete_file(self, files_dir: Path, file_name: str):
         await aios.remove(files_dir / file_name)
 
-    def generate_unique_filename(self) -> str:
-        """Getting a unique file name in the format <random_part>_<timestamp>."""
-        basename = "".join(choices(string.ascii_letters + string.digits, k=5))
-        suffix = int(datetime.now().timestamp())
-        return f"{basename}_{suffix}"
+    async def is_file_exists(self, files_dir: Path, file_name: str) -> bool:
+        return await aios.path.exists(files_dir / file_name)
 
 
 class EnvManager(abstract.AEnvManager):
