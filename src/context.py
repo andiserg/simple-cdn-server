@@ -1,21 +1,11 @@
 from pathlib import Path
 
 from src import adapters
-from src.abstract import adapters as abstract
-from src.abstract.event_manager import AEventManager
+from src.abstract.context import AContext
 from src.services.event_manager import EventManager
 
 
-class Context:
-    web: abstract.AWebClient
-    files: abstract.AFileManager
-    env: abstract.AEnvManager
-    servers: abstract.AServersManager
-    events: AEventManager
-
-    ROOT_DIR: Path
-    FILES_DIR: Path
-
+class Context(AContext):
     def __init__(self):
         self.web = adapters.WebClient()
         self.files = adapters.FileManager()

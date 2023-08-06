@@ -2,8 +2,8 @@ import asyncio
 from collections import defaultdict
 from typing import Callable
 
+from src.abstract.context import AContext
 from src.abstract.event_manager import AEventManager
-from src.context import Context
 from src.domain.events import Event
 
 
@@ -19,7 +19,7 @@ class EventManager(AEventManager):
         """
         self.subscribers[event_class].append(callback)
 
-    async def publish(self, context: Context, event: Event):
+    async def publish(self, context: AContext, event: Event):
         """
         Run event handlers in the background in an asynchronous mode
         :param context: Context. Needed for method execution

@@ -2,6 +2,7 @@ import pytest
 from aiohttp import web
 from aiohttp.test_utils import TestClient
 
+from src.abstract.context import AContext
 from src.context import Context
 from src.routes import get_handlers
 from tests.fake_src.context import FakeContext
@@ -20,10 +21,10 @@ def cli(event_loop, aiohttp_client) -> TestClient:
 
 
 @pytest.fixture()
-def context() -> Context:
+def context() -> AContext:
     return Context()
 
 
 @pytest.fixture()
-def fake_context() -> FakeContext:
+def fake_context() -> AContext:
     return FakeContext()
