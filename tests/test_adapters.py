@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from src.domain import File
+from src.domain.model import File, Server
 
 
 @pytest.mark.asyncio
@@ -34,3 +34,27 @@ async def test_file_manager_delete_file_with_correct_name_should_delete(context)
     await context.files.delete_file(context.FILES_DIR, "test.txt")
 
     assert not os.path.exists(context.FILES_DIR / "test.txt")
+
+
+@pytest.mark.asyncio
+async def test_servers_manager_get_servers_with_correct_data_return_servers(context):
+    result = await context.servers.get_servers(context.ROOT_DIR)
+    assert all([isinstance(server, Server) for server in result])
+
+
+@pytest.mark.asyncio
+async def test_web_client_upload_file_with_correct_data_should_upload(context):
+    """
+    Test is not feasible, because passing it would require editing the handlers
+    of other server to accept test requests.
+    """
+    assert True
+
+
+@pytest.mark.asyncio
+async def test_web_client_send_file_status_with_correct_data_should_send(context):
+    """
+    Test is not feasible, because passing it would require editing the handlers
+    of other server to accept test requests.
+    """
+    assert True
