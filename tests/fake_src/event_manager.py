@@ -7,7 +7,7 @@ from src.domain.events import Event
 
 
 class FakeEventManager(AEventManager):
-    def __int__(self):
+    def __init__(self):
         self.subscribers = defaultdict(list)
         self.events = []
 

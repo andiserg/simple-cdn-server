@@ -9,7 +9,7 @@ class FakeWebClient(abstract.AWebClient):
         pass
 
     async def upload_file(self, server: Server, file: File, test: bool = False):
-        pass
+        return {"server": Server, "file": file}
 
 
 class FakeFileManager(abstract.AFileManager):
@@ -30,4 +30,4 @@ class FakeEnvManager(abstract.AEnvManager):
 
 class FakeServersManager(abstract.AServersManager):
     async def get_servers(self, root_dir: Path) -> list[Server]:
-        pass
+        return [Server(name="TestVPS", ip="test", zone="test_zone")]
