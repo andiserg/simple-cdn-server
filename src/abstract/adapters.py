@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from src.domain.model import File, Server
+from src.domain.model import File, ReplicatedFileStatus, Server
 
 
 class AWebClient(ABC):
@@ -14,7 +14,7 @@ class AWebClient(ABC):
         pass
 
     @abstractmethod
-    async def send_file_status(self, origin_url: str, file_name: str):
+    async def send_file_status(self, origin_url: str, status: ReplicatedFileStatus):
         pass
 
 
