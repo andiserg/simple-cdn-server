@@ -13,6 +13,10 @@ class AWebClient(ABC):
     async def upload_file(self, server: Server, file: File, test: bool = False):
         pass
 
+    @abstractmethod
+    async def send_file_status(self, origin_url: str, file_name: str):
+        pass
+
 
 class AFileManager(ABC):
     @abstractmethod
