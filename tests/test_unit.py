@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from src.domain import File
+from src.domain import File, Server
 
 
 @pytest.mark.asyncio
