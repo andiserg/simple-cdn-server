@@ -1,7 +1,7 @@
 import asyncio
 
 from src.context import Context
-from src.domain import File
+from src.domain.model import File
 
 
 async def download_file(context: Context, link: str) -> File:

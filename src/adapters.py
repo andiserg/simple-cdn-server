@@ -10,7 +10,7 @@ from aiofiles import os as aios
 from aiohttp import ClientSession
 
 from src.abstract import adapters as abstract
-from src.domain import File, Server
+from src.domain.model import File, Server
 
 
 class WebClient(abstract.AWebClient):

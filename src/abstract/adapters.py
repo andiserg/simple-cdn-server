@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from src.domain import File, Server
+from src.domain.model import File, Server
 
 
 class AWebClient(ABC):
