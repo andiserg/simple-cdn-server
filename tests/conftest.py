@@ -13,12 +13,12 @@ from tests.fake_src.event_manager import FakeEventManager
 
 
 @pytest.fixture()
-def cli(event_loop, aiohttp_client, context) -> TestClient:
+def cli(event_loop, aiohttp_client, fake_context) -> TestClient:
     """Getting the client for server testing."""
     # Note: This is a duplicate of the code in main.py.
     # If you call init_app(), pytest will hang during execution.
     app = web.Application()
-    handlers = get_handlers(context)
+    handlers = get_handlers(fake_context)
     app.add_routes(handlers)
     return event_loop.run_until_complete(aiohttp_client(app))
 

@@ -5,8 +5,8 @@ from src.domain.model import File, Server
 
 
 class FakeWebClient(abstract.AWebClient):
-    async def download_file(self, link: str):
-        pass
+    async def download_file(self, link: str) -> File:
+        return File(content=b"Hello world", file_type="txt", name="test")
 
     async def upload_file(self, server: Server, file: File, test: bool = False):
         return {"server": Server, "file": file}
@@ -14,13 +14,13 @@ class FakeWebClient(abstract.AWebClient):
 
 class FakeFileManager(abstract.AFileManager):
     async def save_file(self, files_dir, file: File):
-        pass
+        return f"{file.name}.{file.file_type}"
 
     async def delete_file(self, files_dir, file_name: str):
         pass
 
     async def is_file_exists(self, file_dir: Path, file_name: str) -> bool:
-        pass
+        return False
 
 
 class FakeEnvManager(abstract.AEnvManager):
