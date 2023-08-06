@@ -1,0 +1,17 @@
+[
+  {
+    "name": "VSP1",
+    "ip": "188.166.163.136",
+    "zone": "Frankfurt"
+  },
+  {
+    "name": "VSP2",
+    "ip": "188.166.163.136",
+    "zone": "New York"
+  },
+  {
+    "name": "VSP3",
+    "ip": "188.166.163.136",
+    "zone": "Singapore"
+  }
+]

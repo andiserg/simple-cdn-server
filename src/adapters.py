@@ -1,3 +1,4 @@
+import json
 import os
 import string
 from datetime import datetime
@@ -50,3 +51,9 @@ class FileManager(abstract.AFileManager):
 class EnvManager(abstract.AEnvManager):
     async def get(self, key: str) -> str:
         return os.environ.get(key)
+
+
+class ServersManager(abstract.AServersManager):
+    async def get_servers(self, root_dir: Path) -> list[dict]:
+        with open(root_dir / "servers.json") as f:
+            return json.load(f)

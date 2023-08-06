@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from pathlib import Path
 
 from src.domain import File
 
@@ -22,4 +23,10 @@ class AFileManager(ABC):
 class AEnvManager(ABC):
     @abstractmethod
     async def get(self, key: str) -> str:
+        pass
+
+
+class AServersManager(ABC):
+    @abstractmethod
+    async def get_servers(self, root_dir: Path) -> list[dict]:
         pass

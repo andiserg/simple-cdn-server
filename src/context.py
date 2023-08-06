@@ -8,10 +8,16 @@ class Context:
     web: abstract.AWebClient
     files: abstract.AFileManager
     env: abstract.AEnvManager
+    servers: abstract.AServersManager
+
+    ROOT_DIR: Path
     FILES_DIR: Path
 
     def __init__(self):
         self.web = adapters.WebClient()
         self.files = adapters.FileManager()
         self.env = adapters.EnvManager()
-        self.FILES_DIR = Path(__file__).parent.parent / "files"
+        self.servers = adapters.ServersManager()
+
+        self.ROOT_DIR = Path(__file__).parent.parent
+        self.FILES_DIR = self.ROOT_DIR / "files"
