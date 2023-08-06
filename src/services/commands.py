@@ -25,6 +25,11 @@ async def save_file(context: Context, file: File) -> str:
 
 
 async def replication_file(context: Context, file: File):
+    """
+    Replication saved file to servers
+    :param context: Context instance
+    :param file: saved File instance
+    """
     servers = await context.servers.get_servers(context.ROOT_DIR)
     tasks = [context.web.upload_file(server, file) for server in servers]
     for task in asyncio.as_completed(tasks):
