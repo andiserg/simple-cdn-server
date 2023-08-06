@@ -7,7 +7,7 @@ from src.domain.events import Event
 
 class AEventManager(ABC):
     @abstractmethod
-    async def subscribe(self, event: Event, callback: Callable):
+    async def subscribe(self, event_class: Event, callback: Callable):
         pass
 
     @abstractmethod
