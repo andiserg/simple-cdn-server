@@ -11,6 +11,9 @@ class FakeWebClient(abstract.AWebClient):
     async def upload_file(self, server: Server, file: File, test: bool = False):
         return {"server": Server, "file": file}
 
+    async def send_file_status(self, origin_url: str, file_name: str):
+        pass
+
 
 class FakeFileManager(abstract.AFileManager):
     async def save_file(self, files_dir, file: File):

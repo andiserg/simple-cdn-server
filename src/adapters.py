@@ -23,6 +23,9 @@ class WebClient(abstract.AWebClient):
             async with session.post(f"http://{server.ip}:8080", data=data) as resp:
                 return {"server": server, "status": resp.status}
 
+    async def send_file_status(self, origin_url: str, file_name: str):
+        pass
+
 
 class FileManager(abstract.AFileManager):
     async def save_file(self, files_dir: Path, file: File) -> str:
