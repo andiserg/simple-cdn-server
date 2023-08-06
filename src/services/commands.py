@@ -1,6 +1,7 @@
 import asyncio
 
 from src.context import Context
+from src.domain import events
 from src.domain.model import File
 
 
@@ -31,6 +32,11 @@ async def replication_file(context: Context, file: File):
     :param file: saved File instance
     """
     servers = await context.servers.get_servers(context.ROOT_DIR)
+    # create uploading tasks
     tasks = [context.web.upload_file(server, file) for server in servers]
     for task in asyncio.as_completed(tasks):
-        await task
+        # get result of finished task
+        result = await task
+        event = events.FileReplicatedEvent(file, result["server"])
+        # run event handlers
+        await context.events.publish(context, event)
