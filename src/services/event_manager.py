@@ -2,11 +2,12 @@ import asyncio
 from collections import defaultdict
 from typing import Callable
 
+from src.abstract.event_manager import AEventManager
 from src.context import Context
 from src.domain.events import Event
 
 
-class EventManager:
+class EventManager(AEventManager):
     def __int__(self):
         self.subscribers = defaultdict(list)
 
