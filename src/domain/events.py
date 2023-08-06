@@ -16,3 +16,5 @@ class FileSavedEvent(Event):
 class FileReplicatedEvent(Event):
     file: File
     server: Server
+    duration: int
+    time: int

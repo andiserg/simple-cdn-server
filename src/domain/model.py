@@ -5,6 +5,7 @@ from dataclasses import dataclass
 class File:
     file_type: str
     content: bytes
+    origin_url: str
     name: str | None = None
 
 
@@ -13,3 +14,12 @@ class Server:
     name: str
     ip: str
     zone: str
+
+
+@dataclass
+class ReplicatedFileStatus:
+    file_url: str
+    origin_url: str
+    server: Server
+    duration: int
+    time: int
