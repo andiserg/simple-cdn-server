@@ -3,8 +3,9 @@ from datetime import datetime
 from aiohttp import web
 from aiohttp.web_routedef import RouteDef
 
-from src import services, utils
+from src import utils
 from src.context import Context
+from src.services import commands
 
 
 def get_handlers(context: Context) -> list[RouteDef]:
@@ -29,9 +30,9 @@ class Handlers:
         # starting the timer for measuring the download time of the file
         async with timer:
             # downloading the content of the file
-            file = await services.download_file(self.context, link)
+            file = await commands.download_file(self.context, link)
             # saving the file in the file system
-            file_name = await services.save_file(self.context, file)
+            file_name = await commands.save_file(self.context, file)
 
         # generating the response
         response = {
