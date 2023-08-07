@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from datetime import datetime
 
-from src.domain.model import File, Server
+from src.domain.model import FileInfo, Server
 
 
 class Event:
@@ -10,12 +10,12 @@ class Event:
 
 @dataclass
 class FileSavedEvent(Event):
-    file: File
+    file: FileInfo
 
 
 @dataclass
 class FileReplicatedEvent(Event):
-    file: File
+    file: FileInfo
     server: Server
     duration: int
     time: datetime
