@@ -19,18 +19,18 @@ class WebClient(abstract.AWebClient):
             async with session.get(link) as resp:
                 file_type = resp.content_type.split("/")[1]
                 file_type = file_type if file_type != "octet-stream" else "bin"
+                file_full_name = f"{file_name}.{file_type}"
+                chunk_iterator = resp.content.iter_chunks()
                 # Saving file
-                await save_file_function(
-                    files_dir, f"{file_name}.{file_type}", resp.content.iter_chunks()
-                )
+                await save_file_function(files_dir, file_full_name, chunk_iterator)
                 return FileInfo(name=file_name, file_type=file_type, origin_url=link)
 
     async def upload_file(
-        self, server: Server, file: FileInfo, test: bool = False
+        self, server: Server, file_info: FileInfo, chunk_iterator
     ) -> dict:
         async with ClientSession() as session:
-            data = {"content": file.content, "name": file.name, "type": file.file_type}
-            async with session.post(f"http://{server.ip}:8080", data=data) as resp:
+            chunks = await chunk_iterator(f"{file_info.name}.{file_info.file_type}")
+            async with session.post(f"http://{server.ip}:8080", data=chunks) as resp:
                 return {"server": server, "status": resp.status}
 
     async def send_file_status(self, origin_url: str, status: ReplicatedFileStatus):
@@ -52,17 +52,23 @@ class WebClient(abstract.AWebClient):
 class FileManager(abstract.AFileManager):
     async def save_file(
         self, files_dir: Path, file_name: str, chunk_iterator: AsyncIterable
-    ) -> str:
+    ):
         """
         Saving the file in the system.
         :param files_dir: dir of files
-        :param file: bytes
-        :return: file name
+        :param file_name: file name
+        :param chunk_iterator: file fragment iterator
         """
         async with aiofiles.open(files_dir / file_name, "wb") as f:
             async for chunk in chunk_iterator:
                 await f.write(chunk[0])
-        return file_name
+
+    async def get_chunk_iterator(self, path: Path, chunk_size: int):
+        async with aiofiles.open(path, "rb") as f:
+            chunk = await f.read(chunk_size * 1024)
+            while chunk:
+                yield chunk
+                chunk = await f.read(64 * 1024)
 
     async def delete_file(self, files_dir: Path, file_name: str):
         await aios.remove(files_dir / file_name)

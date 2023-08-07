@@ -13,7 +13,9 @@ class AWebClient(ABC):
         pass
 
     @abstractmethod
-    async def upload_file(self, server: Server, file: FileInfo, test: bool = False):
+    async def upload_file(
+        self, server: Server, file_info: FileInfo, chunk_iterator: AsyncIterable
+    ):
         pass
 
     @abstractmethod
@@ -24,6 +26,10 @@ class AWebClient(ABC):
 class AFileManager(ABC):
     @abstractmethod
     async def save_file(self, files_dir, file_name: str, chunk_iterator: AsyncIterable):
+        pass
+
+    @abstractmethod
+    async def get_chunk_iterator(self, path: Path, chunk_size: int) -> AsyncIterable:
         pass
 
     @abstractmethod
