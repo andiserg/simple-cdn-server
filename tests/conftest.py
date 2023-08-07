@@ -40,4 +40,4 @@ def event_manager() -> AEventManager:
 
 @pytest.fixture()
 def fake_event_manager() -> AEventManager:
-    return subscribe_handlers(FakeEventManager())
+    return FakeEventManager()

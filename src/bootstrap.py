@@ -21,6 +21,6 @@ def subscribe_handlers(event_manager: AEventManager) -> AEventManager:
     Subscribing handlers to events.
     :param event_manager: event manager
     """
-    for event_class, handlers in EVENT_HANDLERS:
+    for event_class, handlers in EVENT_HANDLERS.items():
         map(lambda handler: event_manager.subscribe(event_class, handler), handlers)
     return event_manager
