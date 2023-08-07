@@ -13,7 +13,7 @@ from src.utils import get_unique_filename
 def get_handlers(context: AContext) -> list[RouteDef]:
     handlers = Handlers(context)
     return [
-        web.post("/files/", handlers.download_file_handler),
+        web.post("/files/", handlers.download_file_from_link_handler),
     ]
 
 
@@ -52,3 +52,9 @@ class Handlers:
             "origin_link": link,
         }
         return web.json_response(response, status=200)
+
+    async def file_status_handler(self):
+        pass
+
+    async def upload_file_handler(self, request: web.Request):
+        pass
