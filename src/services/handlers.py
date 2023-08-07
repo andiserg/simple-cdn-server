@@ -4,7 +4,6 @@ from datetime import datetime
 from src.abstract.context import AContext
 from src.domain import events
 from src.domain.events import FileReplicatedEvent, FileSavedEvent
-from src.domain.model import ReplicatedFileStatus
 
 
 async def replication_file(context: AContext, event: FileSavedEvent):
@@ -27,10 +26,21 @@ async def replication_file(context: AContext, event: FileSavedEvent):
         end_time = datetime.now()
         duration = (end_time - start_time).seconds
         event = events.FileReplicatedEvent(
-            event.file_info, result["server"], duration, end_time
+            event.file_info, duration, end_time, result["server"]
         )
         # run event handlers
         await context.events.publish(context, event)
+
+
+async def send_saved_file_status(context: AContext, event: FileSavedEvent):
+    """
+    Send a message to the origin server about the successful saving of the file.
+    :param context: Context instance
+    :param event: file saved event
+    """
+    files_url = await context.env.get("FILES_URL")
+    status = get_status_from_event(event, files_url)
+    await context.web.send_file_status(await context.env.get("ORIGIN_URL"), status)
 
 
 async def send_replicated_file_status(context: AContext, event: FileReplicatedEvent):
@@ -40,17 +50,24 @@ async def send_replicated_file_status(context: AContext, event: FileReplicatedEv
     :param event: file replicated event
     """
     files_url = await context.env.get("FILES_URL")
-    status = ReplicatedFileStatus(
-        file_url=f"{files_url}/files/{event.file.name}.{event.file.file_type}",
-        origin_url=event.file.origin_url,
-        server=event.server,
-        duration=event.duration,
-        time=event.time,
-    )
+    status = get_status_from_event(event, files_url)
+    status["server"] = {"name": event.server.name, "zone": event.server.zone}
     await context.web.send_file_status(await context.env.get("ORIGIN_URL"), status)
 
 
+def get_status_from_event(
+    event: FileReplicatedEvent | FileSavedEvent, files_url: str
+) -> dict:
+    file_name = f"{event.file_info.name}.{event.file_info.file_type}"
+    return {
+        "file_url": f"{files_url}/files/{file_name}",
+        "origin_url": event.file_info.origin_url,
+        "duration": event.duration,
+        "time": event.time.strftime("%Y-%M-%D %H-%m-%S"),
+    }
+
+
 EVENT_HANDLERS = {
-    events.FileSavedEvent: [replication_file],
+    events.FileSavedEvent: [replication_file, send_saved_file_status],
     events.FileReplicatedEvent: [send_replicated_file_status],
 }
