@@ -16,6 +16,8 @@ async def download_and_save_file(
     Downloading a file from the link.
     :param context: Context instance
     :param link: link to the file
+    :param files_dir: path to dir of files
+    :param file_name: file name
     :param save_file_function: Function for saving a file to the file system.
     The algorithm for downloading and saving the file will be executed in one place
     because they implement chunks download.

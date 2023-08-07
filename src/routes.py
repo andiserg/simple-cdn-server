@@ -33,7 +33,7 @@ class Handlers:
         async with timer:
             # set file name
             file_name = await get_unique_filename(self.context)
-            # downloading the content of the file
+            # downloading and saving file in the file system
             file = await commands.download_and_save_file(
                 self.context,
                 link,
@@ -41,7 +41,6 @@ class Handlers:
                 file_name,
                 self.context.files.save_file,
             )
-            # saving the file in the file system
 
         event = events.FileSavedEvent(file)
         await self.context.events.publish(self.context, event)
