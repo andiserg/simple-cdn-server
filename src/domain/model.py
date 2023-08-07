@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import AsyncIterable
 
 
 @dataclass
@@ -8,12 +7,6 @@ class FileInfo:
     file_type: str
     origin_url: str
     name: str | None = None
-
-
-@dataclass
-class DownloadResult:
-    file_info: FileInfo
-    chunk_iterator: AsyncIterable
 
 
 @dataclass
