@@ -60,4 +60,4 @@ async def get_chunk_iterator(context: AContext, file_name: str) -> AsyncIterable
     """
     file_path = context.FILES_DIR / file_name
     chunk_size = int(await context.env.get("CHUNK_SIZE"))
-    return await context.files.get_chunk_iterator(file_path, chunk_size)
+    return context.files.get_chunk_iterator(file_path, chunk_size)
