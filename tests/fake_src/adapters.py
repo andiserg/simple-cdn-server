@@ -1,25 +1,33 @@
 from pathlib import Path
+from typing import AsyncIterable, Callable
 
 from src.abstract import adapters as abstract
 from src.domain.model import FileInfo, ReplicatedFileStatus, Server
 
 
 class FakeWebClient(abstract.AWebClient):
-    async def download_file(self, link: str) -> FileInfo:
-        return FileInfo(
-            content=b"Hello world", file_type="txt", name="test", origin_url=link
-        )
+    async def download_and_save_file(
+        self, link: str, files_dir: Path, file_name: str, save_file_function: Callable
+    ) -> FileInfo:
+        return FileInfo(name="test", file_type="txt", origin_url="test")
 
-    async def upload_file(self, server: Server, file: FileInfo, test: bool = False):
-        return {"server": Server, "file": file}
+    async def upload_file(
+        self, server: Server, file_info: FileInfo, chunk_iterator: AsyncIterable
+    ):
+        return {"server": Server, "status": 200}
 
     async def send_file_status(self, origin_url: str, status: ReplicatedFileStatus):
         pass
 
 
 class FakeFileManager(abstract.AFileManager):
-    async def save_file(self, files_dir, file: FileInfo):
-        return f"{file.name}.{file.file_type}"
+    async def save_file(
+        self, files_dir: Path, file_name: str, chunk_iterator: AsyncIterable
+    ):
+        pass
+
+    async def get_chunk_iterator(self, path: Path, chunk_size: int) -> AsyncIterable:
+        pass
 
     async def delete_file(self, files_dir, file_name: str):
         pass
@@ -30,7 +38,8 @@ class FakeFileManager(abstract.AFileManager):
 
 class FakeEnvManager(abstract.AEnvManager):
     async def get(self, key: str) -> str:
-        pass
+        if key == "CHUNK_SIZE":
+            return "10"
 
 
 class FakeServersManager(abstract.AServersManager):
