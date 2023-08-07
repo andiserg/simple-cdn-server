@@ -11,7 +11,7 @@ class EventManager(AEventManager):
     def __init__(self):
         self.subscribers = defaultdict(list)
 
-    async def subscribe(self, event_class: Type[Event], callback: Callable):
+    def subscribe(self, event_class: Type[Event], callback: Callable):
         """
         Add a method as a handler for an event.
         :param event_class: Event class

@@ -5,6 +5,7 @@ from aiohttp.web_routedef import RouteDef
 
 from src import utils
 from src.abstract.context import AContext
+from src.domain import events
 from src.services import commands
 from src.utils import get_unique_filename
 
@@ -38,6 +39,9 @@ class Handlers:
             )
             # saving the file in the file system
             file_name = await commands.save_file(self.context, file)
+
+        event = events.FileSavedEvent(file)
+        await self.context.events.publish(self.context, event)
 
         # generating the response
         response = {
