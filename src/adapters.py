@@ -29,13 +29,12 @@ class WebClient(abstract.AWebClient):
         self, server: Server, file_info: FileInfo, chunk_iterator
     ) -> dict:
         async with ClientSession() as session:
-            chunks = await chunk_iterator(f"{file_info.name}.{file_info.file_type}")
-            async with session.post(f"http://{server.ip}:8080", data=chunks) as resp:
+            async with session.put(f"{server.url}/files/", data=chunk_iterator) as resp:
                 return {"server": server, "status": resp.status}
 
     async def send_file_status(self, origin_url: str, status: dict):
         async with ClientSession() as session:
-            async with session.post(origin_url, data=status):
+            async with session.post(f"{origin_url}/status/", data=json.dumps(status)):
                 pass
 
 
@@ -74,8 +73,11 @@ class EnvManager(abstract.AEnvManager):
 
 class ServersManager(abstract.AServersManager):
     async def get_servers(self, root_dir: Path) -> list[Server]:
-        with open(root_dir / "servers.json") as f:
+        servers_file = (
+            "servers_test.json" if os.environ.get("TEST") == "TRUE" else "servers.json"
+        )
+        with open(root_dir / servers_file) as f:
             servers = json.load(f)
         return [
-            Server(server["name"], server["ip"], server["zone"]) for server in servers
+            Server(server["name"], server["url"], server["zone"]) for server in servers
         ]
