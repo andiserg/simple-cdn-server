@@ -1,4 +1,5 @@
 import asyncio
+import os
 from datetime import datetime
 from pathlib import Path
 
@@ -15,7 +16,7 @@ from src.services.handlers import replication_file, send_replicated_file_status
 async def test_replication_file_with_file_should_publish_event(fake_context):
     chunk_iterator = await fake_context.files.get_chunk_iterator(Path(), 10)
     file_info = FileInfo(name="text", file_type="txt", origin_url="test")
-    event = FileSavedEvent(file_info, chunk_iterator)
+    event = FileSavedEvent(file_info, 0, datetime.now(), chunk_iterator)
     await replication_file(fake_context, event)
 
     assert isinstance(fake_context.events.events[-1], FileReplicatedEvent)
@@ -28,7 +29,7 @@ async def test_send_replicated_file_status_with_correct_data_return_status(
     file = FileInfo(name="test", file_type="txt", origin_url="test")
     server = Server(name="TestVPS", ip="0.0.0.0", zone="test")
     event = FileReplicatedEvent(
-        file=file, duration=10, time=datetime.now(), server=server
+        file_info=file, duration=10, time=datetime.now(), server=server
     )
     try:
         # method will pass the test if it executes without errors

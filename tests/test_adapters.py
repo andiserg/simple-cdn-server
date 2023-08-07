@@ -20,15 +20,10 @@ async def test_web_client_download_file_with_correct_data_should_download(contex
 
 
 @pytest.mark.asyncio
-async def test_file_manager_save_file_with_correct_data_should_save(context):
-    async def test_chunks_iterator():
-        test_data = b"Hello, World"
-        chunk_size = 5
-
-        for i in range(0, len(test_data), chunk_size):
-            yield (test_data[i : i + chunk_size], False)
-
-    await context.files.save_file(context.FILES_DIR, "test.txt", test_chunks_iterator())
+async def test_file_manager_save_file_with_correct_data_should_save(
+    context, test_chunk_iterator
+):
+    await context.files.save_file(context.FILES_DIR, "test.txt", test_chunk_iterator)
 
     assert os.path.exists(context.FILES_DIR / "test.txt")
 
@@ -54,12 +49,11 @@ async def test_servers_manager_get_servers_with_correct_data_return_servers(cont
 
 
 @pytest.mark.asyncio
-async def test_web_client_upload_file_with_correct_data_should_upload(context):
-    """
-    Test is not feasible, because passing it would require editing the handlers
-    of other server to accept test requests.
-    """
-    assert True
+async def test_web_client_upload_file_with_correct_data_should_upload(
+    context, test_chunk_iterator, test_server
+):
+    server = Server(name="TestVPS", ip="")
+    await context.web.upload_file()
 
 
 @pytest.mark.asyncio
