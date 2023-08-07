@@ -8,7 +8,7 @@ from aiofiles import os as aios
 from aiohttp import ClientSession
 
 from src.abstract import adapters as abstract
-from src.domain.model import FileInfo, ReplicatedFileStatus, Server
+from src.domain.model import FileInfo, Server
 
 
 class WebClient(abstract.AWebClient):
@@ -33,19 +33,9 @@ class WebClient(abstract.AWebClient):
             async with session.post(f"http://{server.ip}:8080", data=chunks) as resp:
                 return {"server": server, "status": resp.status}
 
-    async def send_file_status(self, origin_url: str, status: ReplicatedFileStatus):
+    async def send_file_status(self, origin_url: str, status: dict):
         async with ClientSession() as session:
-            data = {
-                "source_server": "",
-                "target_server": {
-                    "name": status.server.name,
-                    "zone": status.server.zone,
-                },
-                "duration": status.duration,
-                "time": status.time,
-                "origin_file_url": status.origin_url,
-            }
-            async with session.post(origin_url, data=data):
+            async with session.post(origin_url, data=status):
                 pass
 
 

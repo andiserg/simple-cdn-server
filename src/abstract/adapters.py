@@ -2,14 +2,14 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import AsyncIterable, Callable
 
-from src.domain.model import FileInfo, ReplicatedFileStatus, Server
+from src.domain.model import FileInfo, Server
 
 
 class AWebClient(ABC):
     @abstractmethod
     async def download_and_save_file(
         self, link: str, files_dir: Path, file_name: str, save_file_function: Callable
-    ):
+    ) -> FileInfo:
         pass
 
     @abstractmethod
@@ -19,7 +19,7 @@ class AWebClient(ABC):
         pass
 
     @abstractmethod
-    async def send_file_status(self, origin_url: str, status: ReplicatedFileStatus):
+    async def send_file_status(self, origin_url: str, status: dict):
         pass
 
 

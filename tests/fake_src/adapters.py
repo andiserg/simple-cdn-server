@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import AsyncIterable, Callable
 
 from src.abstract import adapters as abstract
-from src.domain.model import FileInfo, ReplicatedFileStatus, Server
+from src.domain.model import FileInfo, Server
 
 
 class FakeWebClient(abstract.AWebClient):
@@ -16,7 +16,7 @@ class FakeWebClient(abstract.AWebClient):
     ):
         return {"server": Server, "status": 200}
 
-    async def send_file_status(self, origin_url: str, status: ReplicatedFileStatus):
+    async def send_file_status(self, origin_url: str, status: dict):
         pass
 
 
