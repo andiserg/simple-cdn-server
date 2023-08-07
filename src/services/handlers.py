@@ -15,7 +15,7 @@ async def replication_file(context: AContext, event: FileSavedEvent):
     """
     servers = await context.servers.get_servers(context.ROOT_DIR)
     # create uploading tasks
-    tasks = [context.web.upload_file(server, event.file) for server in servers]
+    tasks = [context.web.upload_file(server, event.file_info) for server in servers]
     start_time = datetime.now()
     for task in asyncio.as_completed(tasks):
         # get result of finished task
@@ -24,7 +24,7 @@ async def replication_file(context: AContext, event: FileSavedEvent):
         end_time = datetime.now()
         duration = (end_time - start_time).seconds
         event = events.FileReplicatedEvent(
-            event.file, result["server"], duration, end_time
+            event.file_info, result["server"], duration, end_time
         )
         # run event handlers
         await context.events.publish(context, event)
