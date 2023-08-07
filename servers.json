@@ -1,17 +1,17 @@
 [
   {
-    "name": "VSP1",
-    "ip": "188.166.163.136",
+    "name": "VPS1",
+    "url": "http://188.166.163.136",
     "zone": "Frankfurt"
   },
   {
-    "name": "VSP2",
-    "ip": "188.166.163.136",
+    "name": "VPS2",
+    "url": "http://188.166.163.136",
     "zone": "New York"
   },
   {
-    "name": "VSP3",
-    "ip": "188.166.163.136",
+    "name": "VPS3",
+    "url": "http://188.166.163.136",
     "zone": "Singapore"
   }
 ]
