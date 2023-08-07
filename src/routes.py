@@ -31,12 +31,17 @@ class Handlers:
         timer = utils.Timer()
         # starting the timer for measuring the download time of the file
         async with timer:
+            # set file name
+            file_name = await get_unique_filename(self.context)
             # downloading the content of the file
-            file = await commands.download_file(self.context, link)
-            # set file name if file.name is None
-            file.name = await get_unique_filename(self.context)
+            file = await commands.download_and_save_file(
+                self.context,
+                link,
+                self.context.FILES_DIR,
+                file_name,
+                self.context.files.save_file,
+            )
             # saving the file in the file system
-            file_name = await commands.save_file(self.context, file)
 
         event = events.FileSavedEvent(file)
         await self.context.events.publish(self.context, event)

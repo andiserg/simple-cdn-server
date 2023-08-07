@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+from typing import AsyncIterable, Callable
 
 import aiofiles
 from aiofiles import os as aios
@@ -11,11 +12,18 @@ from src.domain.model import FileInfo, ReplicatedFileStatus, Server
 
 
 class WebClient(abstract.AWebClient):
-    async def download_file(self, link: str) -> FileInfo:
+    async def download_and_save_file(
+        self, link: str, files_dir: Path, file_name: str, save_file_function: Callable
+    ) -> FileInfo:
         async with ClientSession() as session:
             async with session.get(link) as resp:
                 file_type = resp.content_type.split("/")[1]
-                return FileInfo(file_type, await resp.read(), origin_url=link)
+                file_type = file_type if file_type != "octet-stream" else "bin"
+                # Saving file
+                await save_file_function(
+                    files_dir, f"{file_name}.{file_type}", resp.content.iter_chunks()
+                )
+                return FileInfo(name=file_name, file_type=file_type, origin_url=link)
 
     async def upload_file(
         self, server: Server, file: FileInfo, test: bool = False
@@ -42,18 +50,19 @@ class WebClient(abstract.AWebClient):
 
 
 class FileManager(abstract.AFileManager):
-    async def save_file(self, files_dir: Path, file: FileInfo) -> str:
+    async def save_file(
+        self, files_dir: Path, file_name: str, chunk_iterator: AsyncIterable
+    ) -> str:
         """
         Saving the file in the system.
         :param files_dir: dir of files
         :param file: bytes
         :return: file name
         """
-        async with aiofiles.open(
-            files_dir / f"{file.name}.{file.file_type}", "wb"
-        ) as f:
-            await f.write(file.content)
-            return f"{file.name}.{file.file_type}"
+        async with aiofiles.open(files_dir / file_name, "wb") as f:
+            async for chunk in chunk_iterator:
+                await f.write(chunk[0])
+        return file_name
 
     async def delete_file(self, files_dir: Path, file_name: str):
         await aios.remove(files_dir / file_name)
