@@ -1,3 +1,6 @@
+import os
+from typing import AsyncGenerator
+
 import pytest
 from aiohttp import web
 from aiohttp.test_utils import TestClient
@@ -8,6 +11,7 @@ from src.bootstrap import subscribe_handlers
 from src.context import Context
 from src.routes import get_handlers
 from src.services.event_manager import EventManager
+from tests.fake_src.app import init_test_app
 from tests.fake_src.context import FakeContext
 from tests.fake_src.event_manager import FakeEventManager
 
@@ -21,6 +25,16 @@ def cli(event_loop, aiohttp_client, fake_context) -> TestClient:
     handlers = get_handlers(fake_context)
     app.add_routes(handlers)
     return event_loop.run_until_complete(aiohttp_client(app))
+
+
+@pytest.fixture()
+def test_app():
+    return init_test_app()
+
+
+@pytest.fixture()
+def test_server(test_app, aiohttp_server):
+    aiohttp_server(test_app, port=os.environ.get("TEST_SERVER_PORT"))
 
 
 @pytest.fixture()
@@ -41,3 +55,15 @@ def event_manager() -> AEventManager:
 @pytest.fixture()
 def fake_event_manager() -> AEventManager:
     return FakeEventManager()
+
+
+@pytest.fixture()
+def test_chunk_iterator() -> AsyncGenerator:
+    async def test_chunks_iterator():
+        test_data = b"Hello, World"
+        chunk_size = 5
+
+        for i in range(0, len(test_data), chunk_size):
+            yield (test_data[i : i + chunk_size], False)
+
+    return test_chunks_iterator()
