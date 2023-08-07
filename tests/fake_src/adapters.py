@@ -1,7 +1,7 @@
 from pathlib import Path
 
 from src.abstract import adapters as abstract
-from src.domain.model import File, Server
+from src.domain.model import File, ReplicatedFileStatus, Server
 
 
 class FakeWebClient(abstract.AWebClient):
@@ -13,7 +13,7 @@ class FakeWebClient(abstract.AWebClient):
     async def upload_file(self, server: Server, file: File, test: bool = False):
         return {"server": Server, "file": file}
 
-    async def send_file_status(self, origin_url: str, file_name: str):
+    async def send_file_status(self, origin_url: str, status: ReplicatedFileStatus):
         pass
 
 
