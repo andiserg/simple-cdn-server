@@ -10,14 +10,17 @@ class Event:
 
 
 @dataclass
-class FileSavedEvent(Event):
+class FileProcessedEvent(Event):
     file_info: FileInfo
+    duration: int
+    time: datetime
+
+
+@dataclass
+class FileSavedEvent(FileProcessedEvent):
     chunk_iterator: AsyncIterable
 
 
 @dataclass
-class FileReplicatedEvent(Event):
-    file: FileInfo
+class FileReplicatedEvent(FileProcessedEvent):
     server: Server
-    duration: int
-    time: datetime
