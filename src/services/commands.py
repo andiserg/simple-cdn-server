@@ -1,9 +1,11 @@
+from datetime import datetime
 from pathlib import Path
 from typing import AsyncIterable, Callable
 
 from src.abstract.context import AContext
+from src.domain import events
 from src.domain.events import Event
-from src.domain.model import FileInfo
+from src.services.timer import Timer
 
 
 async def publish_event(context: AContext, event: Event):
@@ -22,7 +24,7 @@ async def download_and_save_file(
     files_dir: Path,
     file_name: str,
     save_file_function: Callable,
-) -> FileInfo:
+):
     """
     Downloading a file from the link.
 
@@ -34,11 +36,18 @@ async def download_and_save_file(
     The algorithm for downloading and saving the file will be executed in one place
     because they implement chunks download.
     It is important to save the file without closing the connection to the server.
-    :return: iterator of file chunks
     """
-    return await context.web.download_and_save_file(
-        link, files_dir, file_name, save_file_function
+    timer = Timer()
+    # starting the timer for measuring the download time of the file
+    async with timer:
+        file_info = await context.web.download_and_save_file(
+            link, files_dir, file_name, save_file_function
+        )
+    chunk_iter = await get_chunk_iterator(context, f"{file_name}.{file_info.file_type}")
+    event = events.FileSavedEvent(
+        file_info, timer.execution_time, datetime.now(), chunk_iter
     )
+    await publish_event(context, event)
 
 
 async def get_chunk_iterator(context: AContext, file_name: str) -> AsyncIterable:
