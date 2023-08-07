@@ -42,8 +42,11 @@ class Handlers:
                 self.context.files.save_file,
             )
 
-        event = events.FileSavedEvent(file)
-        await self.context.events.publish(self.context, event)
+        chunk_iterator = await commands.get_chunk_iterator(
+            self.context, f"{file_name}.{file.file_type}"
+        )
+        event = events.FileSavedEvent(file, chunk_iterator)
+        await commands.publish_event(self.context, event)
 
         # generating the response
         response = {
