@@ -1,8 +1,19 @@
 from pathlib import Path
-from typing import Callable
+from typing import AsyncIterable, Callable
 
 from src.abstract.context import AContext
+from src.domain.events import Event
 from src.domain.model import FileInfo
+
+
+async def publish_event(context: AContext, event: Event):
+    """
+    Publish an event to trigger the execution of handlers.
+
+    :param context: Context instance
+    :param event: The event to be published.
+    """
+    await context.events.publish(context, event)
 
 
 async def download_and_save_file(
@@ -14,6 +25,7 @@ async def download_and_save_file(
 ) -> FileInfo:
     """
     Downloading a file from the link.
+
     :param context: Context instance
     :param link: link to the file
     :param files_dir: path to dir of files
@@ -29,11 +41,14 @@ async def download_and_save_file(
     )
 
 
-async def save_file(context: AContext, file: FileInfo) -> str:
+async def get_chunk_iterator(context: AContext, file_name: str) -> AsyncIterable:
     """
-    Saving the file in the system and returning its name.
+    Get a chunk iterator for the specified file.
+
     :param context: Context instance
-    :param file: bytes
-    :return: file name
+    :param file_name: The path of the file to be streamed.
+    :return: An iterator that yields chunks of the file.
     """
-    return await context.files.save_file(context.FILES_DIR, file)
+    file_path = context.FILES_DIR / file_name
+    chunk_size = int(await context.env.get("CHUNK_SIZE"))
+    return await context.files.get_chunk_iterator(file_path, chunk_size)
