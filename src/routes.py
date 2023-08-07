@@ -1,11 +1,9 @@
-from datetime import datetime
+import asyncio
 
 from aiohttp import web
 from aiohttp.web_routedef import RouteDef
 
-from src import utils
 from src.abstract.context import AContext
-from src.domain import events
 from src.services import commands
 from src.utils import get_unique_filename
 
@@ -28,40 +26,19 @@ class Handlers:
         if not link:
             raise web.HTTPBadRequest(reason="link is required.")
 
-        timer = utils.Timer()
-        # starting the timer for measuring the download time of the file
-        async with timer:
-            # set file name
-            file_name = await get_unique_filename(self.context)
-            # downloading and saving file in the file system
-            file = await commands.download_and_save_file(
+        # set file name
+        file_name = await get_unique_filename(self.context)
+        # downloading and saving file in the file system
+        asyncio.create_task(
+            commands.download_and_save_file(
                 self.context,
                 link,
                 self.context.FILES_DIR,
                 file_name,
                 self.context.files.save_file,
             )
-
-        chunk_iterator = await commands.get_chunk_iterator(
-            self.context, f"{file_name}.{file.file_type}"
         )
-        event = events.FileSavedEvent(file, chunk_iterator)
-        await commands.publish_event(self.context, event)
-
-        # generating the response
-        response = {
-            "name": await self.context.env.get("NAME"),
-            "city": await self.context.env.get("CITY"),
-            "ip": await self.context.env.get("IP"),
-            "download_duration": timer.execution_time,
-            "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "file_link": f"{await self.context.env.get('FILES_URL')}/files/{file_name}",
-            "origin_link": link,
-        }
-        return web.json_response(response, status=200)
-
-    async def file_status_handler(self):
-        pass
+        return web.Response(status=200)
 
     async def upload_file_handler(self, request: web.Request):
         pass
