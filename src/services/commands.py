@@ -50,7 +50,7 @@ async def download_and_save_file(
     await publish_event(context, event)
 
 
-async def get_chunk_iterator(context: AContext, file_name: str) -> AsyncIterable:
+async def get_chunk_iterator(context: AContext, file_name: str):
     """
     Get a chunk iterator for the specified file.
 
@@ -61,3 +61,18 @@ async def get_chunk_iterator(context: AContext, file_name: str) -> AsyncIterable
     file_path = context.FILES_DIR / file_name
     chunk_size = int(await context.env.get("CHUNK_SIZE"))
     return context.files.get_chunk_iterator(file_path, chunk_size)
+
+
+async def save_file(
+    context: AContext, file_name: str, chunk_iterator: AsyncIterable
+) -> bool:
+    """
+    Save the file to the file system using streaming upload.
+
+    :param context: Context instance
+    :param chunk_iterator: A chunk iterator that provides the file data.
+    :param file_name: file name
+    :return: True if the file was saved successfully, False otherwise.
+    """
+    await context.files.save_file(context.FILES_DIR, file_name, chunk_iterator)
+    return True

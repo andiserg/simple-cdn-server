@@ -12,6 +12,7 @@ def get_handlers(context: AContext) -> list[RouteDef]:
     handlers = Handlers(context)
     return [
         web.post("/files/", handlers.download_file_from_link_handler),
+        web.put("/files/", handlers.upload_file_handler),
     ]
 
 
@@ -41,4 +42,8 @@ class Handlers:
         return web.Response(status=200)
 
     async def upload_file_handler(self, request: web.Request):
-        pass
+        result = await commands.save_file(
+            self.context, request.headers["FILE_NAME"], request.content.iter_chunks()
+        )
+        if result:
+            return web.Response(status=200)
