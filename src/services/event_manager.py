@@ -1,6 +1,6 @@
 import asyncio
 from collections import defaultdict
-from typing import Callable
+from typing import Callable, Type
 
 from src.abstract.context import AContext
 from src.abstract.event_manager import AEventManager
@@ -8,10 +8,10 @@ from src.domain.events import Event
 
 
 class EventManager(AEventManager):
-    def __int__(self):
+    def __init__(self):
         self.subscribers = defaultdict(list)
 
-    async def subscribe(self, event_class: Event, callback: Callable):
+    async def subscribe(self, event_class: Type[Event], callback: Callable):
         """
         Add a method as a handler for an event.
         :param event_class: Event class
