@@ -2,7 +2,7 @@ import os
 
 import pytest
 
-from src.domain.model import File, Server
+from src.domain.model import FileInfo, Server
 
 
 @pytest.mark.asyncio
@@ -10,13 +10,13 @@ async def test_web_client_download_file_with_correct_data_should_download(contex
     link = "https://freetestdata.com/wp-content/uploads/2023/04/1.17-MB.bmp"
     file = await context.web.download_file(link)
 
-    assert isinstance(file, File)
+    assert isinstance(file, FileInfo)
     assert isinstance(file.content, bytes)
 
 
 @pytest.mark.asyncio
 async def test_file_manager_save_file_with_correct_data_should_save(context):
-    file = File(content=b"Hello world", file_type="txt", origin_url="test")
+    file = FileInfo(content=b"Hello world", file_type="txt", origin_url="test")
     file_name = await context.files.save_file(context.FILES_DIR, file)
 
     assert os.path.exists(context.FILES_DIR / file_name)

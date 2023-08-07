@@ -7,17 +7,19 @@ from aiofiles import os as aios
 from aiohttp import ClientSession
 
 from src.abstract import adapters as abstract
-from src.domain.model import File, ReplicatedFileStatus, Server
+from src.domain.model import FileInfo, ReplicatedFileStatus, Server
 
 
 class WebClient(abstract.AWebClient):
-    async def download_file(self, link: str) -> File:
+    async def download_file(self, link: str) -> FileInfo:
         async with ClientSession() as session:
             async with session.get(link) as resp:
                 file_type = resp.content_type.split("/")[1]
-                return File(file_type, await resp.read(), origin_url=link)
+                return FileInfo(file_type, await resp.read(), origin_url=link)
 
-    async def upload_file(self, server: Server, file: File, test: bool = False) -> dict:
+    async def upload_file(
+        self, server: Server, file: FileInfo, test: bool = False
+    ) -> dict:
         async with ClientSession() as session:
             data = {"content": file.content, "name": file.name, "type": file.file_type}
             async with session.post(f"http://{server.ip}:8080", data=data) as resp:
@@ -40,7 +42,7 @@ class WebClient(abstract.AWebClient):
 
 
 class FileManager(abstract.AFileManager):
-    async def save_file(self, files_dir: Path, file: File) -> str:
+    async def save_file(self, files_dir: Path, file: FileInfo) -> str:
         """
         Saving the file in the system.
         :param files_dir: dir of files

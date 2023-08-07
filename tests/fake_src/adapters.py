@@ -1,16 +1,16 @@
 from pathlib import Path
 
 from src.abstract import adapters as abstract
-from src.domain.model import File, ReplicatedFileStatus, Server
+from src.domain.model import FileInfo, ReplicatedFileStatus, Server
 
 
 class FakeWebClient(abstract.AWebClient):
-    async def download_file(self, link: str) -> File:
-        return File(
+    async def download_file(self, link: str) -> FileInfo:
+        return FileInfo(
             content=b"Hello world", file_type="txt", name="test", origin_url=link
         )
 
-    async def upload_file(self, server: Server, file: File, test: bool = False):
+    async def upload_file(self, server: Server, file: FileInfo, test: bool = False):
         return {"server": Server, "file": file}
 
     async def send_file_status(self, origin_url: str, status: ReplicatedFileStatus):
@@ -18,7 +18,7 @@ class FakeWebClient(abstract.AWebClient):
 
 
 class FakeFileManager(abstract.AFileManager):
-    async def save_file(self, files_dir, file: File):
+    async def save_file(self, files_dir, file: FileInfo):
         return f"{file.name}.{file.file_type}"
 
     async def delete_file(self, files_dir, file_name: str):

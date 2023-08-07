@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from pathlib import Path
 
-from src.domain.model import File, ReplicatedFileStatus, Server
+from src.domain.model import FileInfo, ReplicatedFileStatus, Server
 
 
 class AWebClient(ABC):
@@ -10,7 +10,7 @@ class AWebClient(ABC):
         pass
 
     @abstractmethod
-    async def upload_file(self, server: Server, file: File, test: bool = False):
+    async def upload_file(self, server: Server, file: FileInfo, test: bool = False):
         pass
 
     @abstractmethod
@@ -20,7 +20,7 @@ class AWebClient(ABC):
 
 class AFileManager(ABC):
     @abstractmethod
-    async def save_file(self, files_dir, file: File):
+    async def save_file(self, files_dir, file: FileInfo):
         pass
 
     @abstractmethod
