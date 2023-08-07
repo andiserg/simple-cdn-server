@@ -3,9 +3,8 @@ from datetime import datetime
 
 
 @dataclass
-class File:
+class FileInfo:
     file_type: str
-    content: bytes
     origin_url: str
     name: str | None = None
 
