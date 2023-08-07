@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 from src.domain.model import File, Server
 
@@ -17,4 +18,4 @@ class FileReplicatedEvent(Event):
     file: File
     server: Server
     duration: int
-    time: int
+    time: datetime

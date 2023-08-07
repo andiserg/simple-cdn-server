@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 
 from src.abstract.context import AContext
 from src.domain import events
@@ -34,9 +35,13 @@ async def replication_file(context: AContext, file: File):
     servers = await context.servers.get_servers(context.ROOT_DIR)
     # create uploading tasks
     tasks = [context.web.upload_file(server, file) for server in servers]
+    start_time = datetime.now()
     for task in asyncio.as_completed(tasks):
         # get result of finished task
         result = await task
-        event = events.FileReplicatedEvent(file, result["server"])
+        # get the task execution time
+        end_time = datetime.now()
+        duration = (end_time - start_time).seconds
+        event = events.FileReplicatedEvent(file, result["server"], duration, end_time)
         # run event handlers
         await context.events.publish(context, event)

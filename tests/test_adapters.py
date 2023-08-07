@@ -16,7 +16,7 @@ async def test_web_client_download_file_with_correct_data_should_download(contex
 
 @pytest.mark.asyncio
 async def test_file_manager_save_file_with_correct_data_should_save(context):
-    file = File(content=b"Hello world", file_type="txt")
+    file = File(content=b"Hello world", file_type="txt", origin_url="test")
     file_name = await context.files.save_file(context.FILES_DIR, file)
 
     assert os.path.exists(context.FILES_DIR / file_name)

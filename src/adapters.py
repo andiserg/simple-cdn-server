@@ -15,7 +15,7 @@ class WebClient(abstract.AWebClient):
         async with ClientSession() as session:
             async with session.get(link) as resp:
                 file_type = resp.content_type.split("/")[1]
-                return File(file_type, await resp.read())
+                return File(file_type, await resp.read(), origin_url=link)
 
     async def upload_file(self, server: Server, file: File, test: bool = False) -> dict:
         async with ClientSession() as session:

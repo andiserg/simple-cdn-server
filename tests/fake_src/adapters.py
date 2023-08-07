@@ -6,7 +6,9 @@ from src.domain.model import File, Server
 
 class FakeWebClient(abstract.AWebClient):
     async def download_file(self, link: str) -> File:
-        return File(content=b"Hello world", file_type="txt", name="test")
+        return File(
+            content=b"Hello world", file_type="txt", name="test", origin_url=link
+        )
 
     async def upload_file(self, server: Server, file: File, test: bool = False):
         return {"server": Server, "file": file}

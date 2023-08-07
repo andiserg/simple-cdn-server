@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 
 
 @dataclass
@@ -22,4 +23,4 @@ class ReplicatedFileStatus:
     origin_url: str
     server: Server
     duration: int
-    time: int
+    time: datetime
