@@ -17,12 +17,12 @@ from tests.fake_src.event_manager import FakeEventManager
 
 
 @pytest.fixture()
-def cli(event_loop, aiohttp_client, fake_context) -> TestClient:
+def cli(event_loop, aiohttp_client, context) -> TestClient:
     """Getting the client for server testing."""
     # Note: This is a duplicate of the code in main.py.
     # If you call init_app(), pytest will hang during execution.
     app = web.Application()
-    handlers = get_handlers(fake_context)
+    handlers = get_handlers(context)
     app.add_routes(handlers)
     return event_loop.run_until_complete(aiohttp_client(app))
 
@@ -34,7 +34,7 @@ def test_app():
 
 @pytest.fixture()
 def test_server(test_app, aiohttp_server):
-    aiohttp_server(test_app, port=os.environ.get("TEST_SERVER_PORT"))
+    return aiohttp_server(test_app, port=int(os.environ.get("TEST_SERVER_PORT")))
 
 
 @pytest.fixture()
@@ -58,12 +58,24 @@ def fake_event_manager() -> AEventManager:
 
 
 @pytest.fixture()
-def test_chunk_iterator() -> AsyncGenerator:
+def test_chunk_iterator_download() -> AsyncGenerator:
     async def test_chunks_iterator():
         test_data = b"Hello, World"
         chunk_size = 5
 
         for i in range(0, len(test_data), chunk_size):
             yield (test_data[i : i + chunk_size], False)
+
+    return test_chunks_iterator()
+
+
+@pytest.fixture()
+def test_chunk_iterator_upload() -> AsyncGenerator:
+    async def test_chunks_iterator():
+        test_data = b"Hello, World"
+        chunk_size = 1
+
+        for i in range(0, len(test_data), chunk_size):
+            yield test_data[i : i + chunk_size]
 
     return test_chunks_iterator()

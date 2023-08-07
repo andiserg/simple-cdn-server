@@ -44,4 +44,4 @@ class FakeEnvManager(abstract.AEnvManager):
 
 class FakeServersManager(abstract.AServersManager):
     async def get_servers(self, root_dir: Path) -> list[Server]:
-        return [Server(name="TestVPS", ip="test", zone="test_zone")]
+        return [Server(name="TestVPS", url="test", zone="test_zone")]

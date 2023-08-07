@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 
 import pytest
 
@@ -21,9 +22,11 @@ async def test_web_client_download_file_with_correct_data_should_download(contex
 
 @pytest.mark.asyncio
 async def test_file_manager_save_file_with_correct_data_should_save(
-    context, test_chunk_iterator
+    context, test_chunk_iterator_download
 ):
-    await context.files.save_file(context.FILES_DIR, "test.txt", test_chunk_iterator)
+    await context.files.save_file(
+        context.FILES_DIR, "test.txt", test_chunk_iterator_download
+    )
 
     assert os.path.exists(context.FILES_DIR / "test.txt")
 
@@ -50,16 +53,40 @@ async def test_servers_manager_get_servers_with_correct_data_return_servers(cont
 
 @pytest.mark.asyncio
 async def test_web_client_upload_file_with_correct_data_should_upload(
-    context, test_chunk_iterator, test_server
+    context, test_chunk_iterator_upload, test_server
 ):
-    server = Server(name="TestVPS", ip="")
-    await context.web.upload_file()
+    with open(context.FILES_DIR / "test.txt", "wb") as f:
+        # create file
+        f.write(b"Hello world")
+
+    # run test server
+    await test_server
+    port = os.environ.get("TEST_SERVER_PORT")
+    server = Server(name="TestVPS", url=f"http://127.0.0.1:{port}", zone="test")
+    file_info = FileInfo(name="test", file_type="txt", origin_url="test")
+
+    response = await context.web.upload_file(
+        server, file_info, test_chunk_iterator_upload
+    )
+    assert response["status"] == 200
+    assert response["server"] == server
+
+    # delete file
+    os.remove(context.FILES_DIR / "test.txt")
 
 
 @pytest.mark.asyncio
-async def test_web_client_send_file_status_with_correct_data_should_send(context):
-    """
-    Test is not feasible, because passing it would require editing the handlers
-    of other server to accept test requests.
-    """
+async def test_web_client_send_file_status_with_correct_data_should_send(
+    context, test_server
+):
+    # run test server
+    await test_server
+    status = {
+        "file_url": f"{os.environ.get('FILES_URL')}/files/test.txt",
+        "origin_url": "test",
+        "duration": 0,
+        "time": datetime.now().strftime("%Y-%M-%D %H-%m-%S"),
+    }
+    origin_url = os.environ.get("ORIGIN_URL")
+    await context.web.send_file_status(origin_url, status)
     assert True
