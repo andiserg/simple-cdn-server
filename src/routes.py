@@ -21,7 +21,7 @@ class Handlers:
     def __init__(self, context: AContext):
         self.context = context
 
-    async def download_file_handler(self, request: web.Request):
+    async def download_file_from_link_handler(self, request: web.Request):
         # checking the presence of required fields
         data = await request.post()
         link = data.get("link")
@@ -48,7 +48,7 @@ class Handlers:
             "ip": await self.context.env.get("IP"),
             "download_duration": timer.execution_time,
             "time": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "file_link": file_name,
+            "file_link": f"{await self.context.env.get('FILES_URL')}/files/{file_name}",
             "origin_link": link,
         }
         return web.json_response(response, status=200)
