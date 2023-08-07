@@ -6,7 +6,7 @@ from src.domain import events
 from src.domain.events import FileReplicatedEvent, FileSavedEvent
 
 
-async def replication_file(context: AContext, event: FileSavedEvent):
+async def replicate_file(context: AContext, event: FileSavedEvent):
     """
     Replication saved file to servers
     :param context: Context instance
@@ -68,6 +68,6 @@ def get_status_from_event(
 
 
 EVENT_HANDLERS = {
-    events.FileSavedEvent: [replication_file, send_saved_file_status],
+    events.FileSavedEvent: [replicate_file, send_saved_file_status],
     events.FileReplicatedEvent: [send_replicated_file_status],
 }
