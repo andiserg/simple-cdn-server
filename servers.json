@@ -1,0 +1,17 @@
+[
+  {
+    "name": "VPS1",
+    "url": "http://188.166.163.136",
+    "zone": "Frankfurt"
+  },
+  {
+    "name": "VPS2",
+    "url": "http://188.166.163.136",
+    "zone": "New York"
+  },
+  {
+    "name": "VPS3",
+    "url": "http://188.166.163.136",
+    "zone": "Singapore"
+  }
+]
