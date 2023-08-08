@@ -26,8 +26,11 @@ class FakeFileManager(abstract.AFileManager):
     ):
         pass
 
-    async def get_chunk_iterator(self, path: Path, chunk_size: int) -> AsyncIterable:
-        pass
+    async def get_chunk_iterator_factory(self, path: Path, chunk_size: int) -> Callable:
+        async def get_chunk_iterator():
+            yield None
+
+        return get_chunk_iterator
 
     async def delete_file(self, files_dir, file_name: str):
         pass

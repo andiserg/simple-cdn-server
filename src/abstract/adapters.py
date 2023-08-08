@@ -29,7 +29,7 @@ class AFileManager(ABC):
         pass
 
     @abstractmethod
-    async def get_chunk_iterator(self, path: Path, chunk_size: int) -> AsyncIterable:
+    async def get_chunk_iterator_factory(self, path: Path, chunk_size: int) -> Callable:
         pass
 
     @abstractmethod
