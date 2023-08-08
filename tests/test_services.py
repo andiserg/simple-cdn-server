@@ -9,6 +9,7 @@ from src.abstract.context import AContext
 from src.domain.events import Event, FileReplicatedEvent, FileSavedEvent
 from src.domain.model import FileInfo, Server
 from src.services.event_manager import EventManager
+from src.services.file_cleaner import start_file_cleaner
 from src.services.handlers import replicate_file, send_replicated_file_status
 
 
@@ -61,3 +62,19 @@ async def test_event_manager_publish_with_handlers_should_process(fake_context):
     await asyncio.sleep(0.001)
 
     assert "handler" in event.processed_handlers
+
+
+@pytest.mark.asyncio
+async def test_file_cleaner_with_file_should_delete(context):
+    with open(context.FILES_DIR / "test.txt", "wb") as f:
+        f.write(b"Hello, world")
+
+    # start cleaner task
+    task = asyncio.create_task(start_file_cleaner(context))
+
+    await asyncio.sleep(0.001)
+
+    # stop cleaner task
+    task.cancel()
+
+    assert not os.path.exists(context.FILES_DIR / "test.txt")

@@ -11,5 +11,7 @@ env = [
     "ORIGIN_URL = http://127.0.0.1:8081",
     "TEST_SERVER_PORT = 8081",
     "TEST = TRUE",
-    "CHUNK_SIZE = 10"
+    "CHUNK_SIZE = 10",
+    "CLEANER_SLEEP_TIME = 1",
+    "FILE_EXPIRED_TIME = 0"
 ]
