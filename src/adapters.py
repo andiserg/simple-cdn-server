@@ -29,7 +29,7 @@ class WebClient(abstract.AWebClient):
     async def upload_file(
         self, server: Server, file_info: FileInfo, chunk_iterator
     ) -> dict:
-        headers = {"FILE_NAME": f"{file_info.name}.{file_info.file_type}"}
+        headers = {"FILE-NAME": f"{file_info.name}.{file_info.file_type}"}
         async with ClientSession(headers=headers) as session:
             async with session.put(f"{server.url}/files/", data=chunk_iterator) as resp:
                 return {"server": server, "status": resp.status}
