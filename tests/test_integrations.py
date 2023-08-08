@@ -1,21 +1,31 @@
+import asyncio
+import os
+
 import pytest
 
 
 @pytest.mark.asyncio
-async def test_download_file_with_correct_data_return_link(cli):
-    file_link = "https://freetestdata.com/wp-content/uploads/2023/04/1.17-MB.bmp"
-    response = await cli.post("/files/", data={"link": file_link})
-    response_json = await response.json()
+async def test_download_file_from_link_with_correct_data_return_200(
+    cli, test_server, delete_all_files
+):
+    await test_server
 
-    required_fields = [
-        "name",
-        "city",
-        "ip",
-        "download_duration",
-        "time",
-        "file_link",
-        "origin_link",
-    ]
+    file_link = "https://freetestdata.com/wp-content/uploads/2023/04/1.05KB_JSON-File_FreeTestData.json"
+    response = await cli.post("/files/", data={"link": file_link})
+    await asyncio.sleep(1)
 
     assert response.status == 200
-    assert all([field in response_json for field in required_fields])
+
+
+@pytest.mark.asyncio
+async def test_upload_file_with_correct_data_return_200(
+    cli, test_server, context, delete_all_files
+):
+    await test_server
+    data = b"Hello, world"
+    headers = {"FILE_NAME": "test.txt"}
+
+    response = await cli.put("/files/", data=data, headers=headers)
+    await asyncio.sleep(1)
+
+    assert response.status == 200

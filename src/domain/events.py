@@ -1,6 +1,8 @@
 from dataclasses import dataclass
+from datetime import datetime
+from typing import AsyncIterable
 
-from src.domain.model import File, Server
+from src.domain.model import FileInfo, Server
 
 
 class Event:
@@ -8,11 +10,17 @@ class Event:
 
 
 @dataclass
-class FileSavedEvent(Event):
-    file: File
+class FileProcessedEvent(Event):
+    file_info: FileInfo
+    duration: int
+    time: datetime
 
 
 @dataclass
-class FileReplicatedEvent(Event):
-    file: File
+class FileSavedEvent(FileProcessedEvent):
+    chunk_iterator: AsyncIterable
+
+
+@dataclass
+class FileReplicatedEvent(FileProcessedEvent):
     server: Server

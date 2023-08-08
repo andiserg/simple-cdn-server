@@ -2,14 +2,14 @@ from dataclasses import dataclass
 
 
 @dataclass
-class File:
+class FileInfo:
     file_type: str
-    content: bytes
+    origin_url: str
     name: str | None = None
 
 
 @dataclass
 class Server:
     name: str
-    ip: str
+    url: str
     zone: str
