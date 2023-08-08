@@ -72,7 +72,7 @@ async def test_file_cleaner_with_file_should_delete(context):
     # start cleaner task
     task = asyncio.create_task(start_file_cleaner(context))
 
-    await asyncio.sleep(0.2)
+    await asyncio.sleep(0.001)
 
     # stop cleaner task
     task.cancel()
