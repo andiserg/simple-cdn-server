@@ -40,6 +40,10 @@ async def send_saved_file_status(context: AContext, event: FileSavedEvent):
     """
     files_url = await context.env.get("FILES_URL")
     status = get_status_from_event(event, files_url)
+    status["server"] = {
+        "name": await context.env.get("NAME"),
+        "zone": await context.env.get("ZONE"),
+    }
     await context.web.send_file_status(await context.env.get("ORIGIN_URL"), status)
 
 
