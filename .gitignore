@@ -133,3 +133,4 @@ dmypy.json
 /pytest.ini
 /docker-compose.yml
 /.env.dev
+/nginx.conf
