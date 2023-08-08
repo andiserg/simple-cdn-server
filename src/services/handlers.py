@@ -17,7 +17,7 @@ async def replicate_file(context: AContext, event: FileSavedEvent):
     servers = list(filter(lambda server: server.name != server_name, servers))
     # create uploading tasks
     tasks = [
-        context.web.upload_file(server, event.file_info, event.chunk_iterator)
+        context.web.upload_file(server, event.file_info, event.chunk_iterator())
         for server in servers
     ]
     start_time = datetime.now()

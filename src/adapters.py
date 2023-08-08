@@ -54,12 +54,15 @@ class FileManager(abstract.AFileManager):
             async for chunk in chunk_iterator:
                 await f.write(chunk[0])
 
-    async def get_chunk_iterator(self, path: Path, chunk_size: int):
-        async with aiofiles.open(path, "rb") as f:
-            chunk = await f.read(chunk_size * 1024)
-            while chunk:
-                yield chunk
-                chunk = await f.read(64 * 1024)
+    async def get_chunk_iterator_factory(self, path: Path, chunk_size: int):
+        async def get_chunk_iterator():
+            async with aiofiles.open(path, "rb") as f:
+                chunk = await f.read(chunk_size * 1024)
+                while chunk:
+                    yield chunk
+                    chunk = await f.read(64 * 1024)
+
+        return get_chunk_iterator
 
     async def is_file_exists(self, files_dir: Path, file_name: str) -> bool:
         return await aios.path.exists(files_dir / file_name)
