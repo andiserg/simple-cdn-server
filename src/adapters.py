@@ -1,5 +1,6 @@
 import json
 import os
+from datetime import datetime
 from pathlib import Path
 from typing import AsyncIterable, Callable
 
@@ -60,11 +61,26 @@ class FileManager(abstract.AFileManager):
                 yield chunk
                 chunk = await f.read(64 * 1024)
 
-    async def delete_file(self, files_dir: Path, file_name: str):
-        await aios.remove(files_dir / file_name)
-
     async def is_file_exists(self, files_dir: Path, file_name: str) -> bool:
         return await aios.path.exists(files_dir / file_name)
+
+    async def get_old_files(self, files_dir: Path, expiring_time: int) -> list:
+        now = datetime.now()
+        file_list = [file.name for file in files_dir.iterdir() if file.is_file()]
+        old_files = []
+        for file in file_list:
+            if file == ".gitkeep":
+                continue
+            last_change_time = datetime.fromtimestamp(
+                await aios.path.getmtime(files_dir / file)
+            )
+            if (now - last_change_time).seconds >= expiring_time:
+                old_files.append(file)
+        return old_files
+
+    async def delete_files(self, files_dir: Path, files: list[str]):
+        for file in files:
+            await aios.remove(files_dir / file)
 
 
 class EnvManager(abstract.AEnvManager):

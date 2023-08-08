@@ -33,11 +33,15 @@ class AFileManager(ABC):
         pass
 
     @abstractmethod
-    async def delete_file(self, files_dir, file_name: str):
+    async def is_file_exists(self, file_dir: Path, file_name: str) -> bool:
         pass
 
     @abstractmethod
-    async def is_file_exists(self, file_dir: Path, file_name: str) -> bool:
+    async def get_old_files(self, files_dir: Path, expiring_time: int):
+        pass
+
+    @abstractmethod
+    async def delete_files(self, files_dir: Path, files: list[str]):
         pass
 
 

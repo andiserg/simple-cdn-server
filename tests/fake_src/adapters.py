@@ -35,6 +35,12 @@ class FakeFileManager(abstract.AFileManager):
     async def is_file_exists(self, file_dir: Path, file_name: str) -> bool:
         return False
 
+    async def get_old_files(self, files_dir: Path, expiring_time: int):
+        pass
+
+    async def delete_files(self, files_dir: Path, files: list[str]):
+        pass
+
 
 class FakeEnvManager(abstract.AEnvManager):
     async def get(self, key: str) -> str:

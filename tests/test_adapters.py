@@ -7,7 +7,9 @@ from src.domain.model import FileInfo, Server
 
 
 @pytest.mark.asyncio
-async def test_web_client_download_file_with_correct_data_should_download(context):
+async def test_web_client_download_file_with_correct_data_should_download(
+    context, delete_all_files
+):
     link = "https://freetestdata.com/wp-content/uploads/2023/04/1.17-MB.bmp"
     file = await context.web.download_and_save_file(
         link, context.FILES_DIR, "test", context.files.save_file
@@ -16,33 +18,16 @@ async def test_web_client_download_file_with_correct_data_should_download(contex
     assert isinstance(file, FileInfo)
     assert os.path.exists(context.FILES_DIR / "test.bmp")
 
-    # delete file
-    os.remove(context.FILES_DIR / "test.bmp")
-
 
 @pytest.mark.asyncio
 async def test_file_manager_save_file_with_correct_data_should_save(
-    context, test_chunk_iterator_download
+    context, test_chunk_iterator_download, delete_all_files
 ):
     await context.files.save_file(
         context.FILES_DIR, "test.txt", test_chunk_iterator_download
     )
 
     assert os.path.exists(context.FILES_DIR / "test.txt")
-
-    # delete file
-    os.remove(context.FILES_DIR / "test.txt")
-
-
-@pytest.mark.asyncio
-async def test_file_manager_delete_file_with_correct_name_should_delete(context):
-    with open(context.FILES_DIR / "test.txt", "wb") as f:
-        # create file
-        f.write(b"Hello world")
-
-    await context.files.delete_file(context.FILES_DIR, "test.txt")
-
-    assert not os.path.exists(context.FILES_DIR / "test.txt")
 
 
 @pytest.mark.asyncio
@@ -53,7 +38,7 @@ async def test_servers_manager_get_servers_with_correct_data_return_servers(cont
 
 @pytest.mark.asyncio
 async def test_web_client_upload_file_with_correct_data_should_upload(
-    context, test_chunk_iterator_upload, test_server
+    context, test_chunk_iterator_upload, test_server, delete_all_files
 ):
     with open(context.FILES_DIR / "test.txt", "wb") as f:
         # create file
@@ -71,9 +56,6 @@ async def test_web_client_upload_file_with_correct_data_should_upload(
     assert response["status"] == 200
     assert response["server"] == server
 
-    # delete file
-    os.remove(context.FILES_DIR / "test.txt")
-
 
 @pytest.mark.asyncio
 async def test_web_client_send_file_status_with_correct_data_should_send(
@@ -90,3 +72,22 @@ async def test_web_client_send_file_status_with_correct_data_should_send(
     origin_url = os.environ.get("ORIGIN_URL")
     await context.web.send_file_status(origin_url, status)
     assert True
+
+
+@pytest.mark.asyncio
+async def test_get_old_files_file_manager_return_files(context, delete_all_files):
+    with open(context.FILES_DIR / "test.txt", "wb") as f:
+        f.write(b"Hello, world")
+
+    files = await context.files.get_old_files(context.FILES_DIR, 0)
+
+    assert files == ["test.txt"]
+
+
+@pytest.mark.asyncio
+async def test_delete_files_file_manager_with_correct_data_should_delete(context):
+    with open(context.FILES_DIR / "test.txt", "wb") as f:
+        f.write(b"Hello, world")
+
+    await context.files.delete_files(context.FILES_DIR, ["test.txt"])
+    assert not os.path.exists(context.FILES_DIR / "test.txt")
