@@ -23,7 +23,7 @@ async def test_upload_file_with_correct_data_return_200(
 ):
     await test_server
     data = b"Hello, world"
-    headers = {"FILE_NAME": "test.txt"}
+    headers = {"File-Name": "test.txt"}
 
     response = await cli.put("/files/", data=data, headers=headers)
     await asyncio.sleep(1)
