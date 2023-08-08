@@ -43,7 +43,7 @@ class Handlers:
 
     async def upload_file_handler(self, request: web.Request):
         result = await commands.save_file(
-            self.context, request.headers["FILE_NAME"], request.content.iter_chunks()
+            self.context, request.headers["File-Name"], request.content.iter_chunks()
         )
         if result:
             return web.Response(status=200)
