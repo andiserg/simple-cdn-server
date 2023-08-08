@@ -79,3 +79,11 @@ def test_chunk_iterator_upload() -> AsyncGenerator:
             yield test_data[i : i + chunk_size]
 
     return test_chunks_iterator()
+
+
+@pytest.fixture()
+def delete_all_files(context):
+    yield
+    for filename in os.listdir(context.FILES_DIR):
+        if filename != ".gitkeep":
+            os.remove(context.FILES_DIR / filename)
