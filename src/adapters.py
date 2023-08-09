@@ -1,3 +1,4 @@
+import asyncio
 import json
 import os
 from datetime import datetime
@@ -27,12 +28,19 @@ class WebClient(abstract.AWebClient):
                 return FileInfo(name=file_name, file_type=file_type, origin_url=link)
 
     async def upload_file(
-        self, server: Server, file_info: FileInfo, chunk_iterator
+        self, server: Server, files_dir: Path, file_info: FileInfo
     ) -> dict:
-        headers = {"FILE-NAME": f"{file_info.name}.{file_info.file_type}"}
-        async with ClientSession(headers=headers) as session:
-            async with session.put(f"{server.url}/files/", data=chunk_iterator) as resp:
-                return {"server": server, "status": resp.status}
+        file_name = f"{file_info.name}.{file_info.file_type}"
+        server_ip = server.url.strip("http://")
+        process = await asyncio.create_subprocess_exec(
+            "scp",
+            "-o",
+            "StrictHostKeyChecking=no",
+            files_dir / file_name,
+            f"{server_ip}:files/",
+        )
+        await process.wait()
+        return {"server": server}
 
     async def send_file_status(self, origin_url: str, status: dict):
         async with ClientSession() as session:

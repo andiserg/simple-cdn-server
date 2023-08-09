@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime
 
 from src.abstract.context import AContext
@@ -14,18 +15,16 @@ async def replicate_file(context: AContext, event: FileSavedEvent):
     servers = await context.servers.get_servers(context.ROOT_DIR)
     server_name = await context.env.get("NAME")
     servers = list(filter(lambda server: server.name != server_name, servers))
+    files_dir = context.FILES_DIR
+    tasks = [
+        context.web.upload_file(server, files_dir, event.file_info)
+        for server in servers
+    ]
+
     start_time = datetime.now()
-    for server in servers:
-        chunk_iterator = context.files.get_chunk_iterator(
-            context.FILES_DIR / f"{event.file_info.name}.{event.file_info.file_type}",
-            int(await context.env.get("CHUNK_SIZE")),
-        )
+    for task in asyncio.as_completed(tasks):
         # get result of finished task
-        result = await context.web.upload_file(
-            server,
-            event.file_info,
-            chunk_iterator,
-        )
+        result = await task
         # get the task execution time
         end_time = datetime.now()
         duration = (end_time - start_time).seconds
@@ -77,5 +76,5 @@ def get_status_from_event(
 
 EVENT_HANDLERS = {
     events.FileSavedEvent: [replicate_file],
-    events.FileReplicatedEvent: [send_replicated_file_status],
+    events.FileReplicatedEvent: [],
 }
