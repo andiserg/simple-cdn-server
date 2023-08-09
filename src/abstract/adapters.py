@@ -13,9 +13,7 @@ class AWebClient(ABC):
         pass
 
     @abstractmethod
-    async def upload_file(
-        self, server: Server, file_info: FileInfo, chunk_iterator: AsyncIterable
-    ):
+    async def upload_file(self, server: Server, files_dir: Path, file_info: FileInfo):
         pass
 
     @abstractmethod

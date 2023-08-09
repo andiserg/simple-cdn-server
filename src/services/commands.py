@@ -43,16 +43,11 @@ async def download_and_save_file(
         file_info = await context.web.download_and_save_file(
             link, files_dir, file_name, save_file_function
         )
-    chunk_iter = await get_chunk_iterator_factory(
-        context, f"{file_name}.{file_info.file_type}"
-    )
-    event = events.FileSavedEvent(
-        file_info, timer.execution_time, datetime.now(), chunk_iter
-    )
+    event = events.FileSavedEvent(file_info, timer.execution_time, datetime.now())
     await publish_event(context, event)
 
 
-async def get_chunk_iterator_factory(context: AContext, file_name: str):
+async def get_chunk_iterator(context: AContext, file_name: str):
     """
     Get a chunk iterator for the specified file.
 
@@ -62,7 +57,7 @@ async def get_chunk_iterator_factory(context: AContext, file_name: str):
     """
     file_path = context.FILES_DIR / file_name
     chunk_size = int(await context.env.get("CHUNK_SIZE"))
-    return context.files.get_chunk_iterator_factory(file_path, chunk_size)
+    return context.files.get_chunk_iterator(file_path, chunk_size)
 
 
 async def save_file(

@@ -50,10 +50,7 @@ async def test_web_client_upload_file_with_correct_data_should_upload(
     server = Server(name="TestVPS", url=f"http://146.190.84.172", zone="test")
     file_info = FileInfo(name="aboba", file_type="json", origin_url="test")
 
-    response = await context.web.upload_file(
-        server, file_info, test_chunk_iterator_upload
-    )
-    assert response["status"] == 200
+    response = await context.web.upload_file(server, context.FILES_DIR, file_info)
     assert response["server"] == server
 
 

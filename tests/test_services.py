@@ -15,9 +15,8 @@ from src.services.handlers import replicate_file, send_replicated_file_status
 
 @pytest.mark.asyncio
 async def test_replication_file_with_file_should_publish_event(fake_context):
-    chunk_iterator = await fake_context.files.get_chunk_iterator_factory(Path(), 10)
     file_info = FileInfo(name="text", file_type="txt", origin_url="test")
-    event = FileSavedEvent(file_info, 0, datetime.now(), chunk_iterator)
+    event = FileSavedEvent(file_info, 0, datetime.now())
     await replicate_file(fake_context, event)
 
     assert isinstance(fake_context.events.events[-1], FileReplicatedEvent)
