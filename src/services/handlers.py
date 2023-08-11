@@ -43,8 +43,10 @@ async def send_saved_file_status(context: AContext, event: FileSavedEvent):
     """
     files_url = await context.env.get("FILES_URL")
     status = get_status_from_event(event, files_url)
+    status["type"] = "saved"
     status["server"] = {
         "name": await context.env.get("NAME"),
+        "ip": await context.env.get("IP"),
         "zone": await context.env.get("ZONE"),
     }
     await context.web.send_file_status(await context.env.get("ORIGIN_URL"), status)
@@ -58,7 +60,17 @@ async def send_replicated_file_status(context: AContext, event: FileReplicatedEv
     """
     files_url = await context.env.get("FILES_URL")
     status = get_status_from_event(event, files_url)
-    status["server"] = {"name": event.server.name, "zone": event.server.zone}
+    status["from_server"] = {
+        "name": await context.env.get("NAME"),
+        "ip": await context.env.get("IP"),
+        "zone": await context.env.get("ZONE"),
+    }
+    status["to_server"] = {
+        "name": event.server.name,
+        "ip": event.server.url.strip("http://"),
+        "zone": event.server.zone,
+    }
+    status["type"] = "replicated"
     await context.web.send_file_status(await context.env.get("ORIGIN_URL"), status)
 
 
@@ -67,14 +79,15 @@ def get_status_from_event(
 ) -> dict:
     file_name = f"{event.file_info.name}.{event.file_info.file_type}"
     return {
+        "file_name": event.file_info.name,
         "file_url": f"{files_url}/files/{file_name}",
         "origin_url": event.file_info.origin_url,
         "duration": event.duration,
-        "time": event.time.strftime("%Y-%M-%D %H-%m-%S"),
+        "time": event.time.strftime("%Y/%m/%d %H:%M:%S"),
     }
 
 
 EVENT_HANDLERS = {
-    events.FileSavedEvent: [replicate_file],
-    events.FileReplicatedEvent: [],
+    events.FileSavedEvent: [replicate_file, send_saved_file_status],
+    events.FileReplicatedEvent: [send_replicated_file_status],
 }
