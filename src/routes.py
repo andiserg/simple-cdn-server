@@ -22,7 +22,7 @@ class Handlers:
 
     async def download_file_from_link_handler(self, request: web.Request):
         # checking the presence of required fields
-        data = await request.post()
+        data = await request.json()
         link = data.get("link")
         if not link:
             raise web.HTTPBadRequest(reason="link is required.")
@@ -39,7 +39,9 @@ class Handlers:
                 self.context.files.save_file,
             )
         )
-        return web.Response(status=200)
+        return web.json_response(
+            {"file_name": file_name, "origin_url": link}, status=200
+        )
 
     async def upload_file_handler(self, request: web.Request):
         result = await commands.save_file(
