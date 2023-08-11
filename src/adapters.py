@@ -37,7 +37,7 @@ class WebClient(abstract.AWebClient):
             "-o",
             "StrictHostKeyChecking=no",
             files_dir / file_name,
-            f"{server_ip}:files/",
+            f"root@{server_ip}:files/",
         )
         await process.wait()
         return {"server": server}
