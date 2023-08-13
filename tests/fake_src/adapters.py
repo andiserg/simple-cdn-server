@@ -17,7 +17,7 @@ class FakeWebClient(abstract.AWebClient):
         return {"server": Server, "status": 200}
 
     async def send_file_status(self, origin_url: str, status: dict):
-        pass
+        return
 
 
 class FakeFileManager(abstract.AFileManager):
@@ -25,12 +25,6 @@ class FakeFileManager(abstract.AFileManager):
         self, files_dir: Path, file_name: str, chunk_iterator: AsyncIterable
     ):
         pass
-
-    async def get_chunk_iterator_factory(self, path: Path, chunk_size: int) -> Callable:
-        async def get_chunk_iterator():
-            yield None
-
-        return get_chunk_iterator
 
     async def delete_file(self, files_dir, file_name: str):
         pass
@@ -45,12 +39,6 @@ class FakeFileManager(abstract.AFileManager):
         pass
 
 
-class FakeEnvManager(abstract.AEnvManager):
-    async def get(self, key: str) -> str:
-        if key == "CHUNK_SIZE":
-            return "10"
-
-
 class FakeServersManager(abstract.AServersManager):
     async def get_servers(self, root_dir: Path) -> list[Server]:
-        return [Server(name="TestVPS", url="test", zone="test_zone")]
+        return [Server(name="TestVPS", ip="test", zone="test_zone")]

@@ -7,6 +7,9 @@ profile = "black"
 
 [tool.pytest.ini_options]
 env = [
+    "NAME = TestVPS0",
+    "IP = 127.0.0.1",
+    "ZONE = Kyiv",
     "FILES_URL = http://127.0.0.1:8081",
     "ORIGIN_URL = http://127.0.0.1:8081",
     "TEST_SERVER_PORT = 8081",

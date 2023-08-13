@@ -33,7 +33,7 @@ class WebClient(abstract.AWebClient):
             async with session.get(link) as resp:
                 # get the file type based on the content-type
                 file_type = mimetypes.guess_extension(resp.content_type)[1:]
-                file_full_name = f"{file_name}{file_type}"
+                file_full_name = f"{file_name}.{file_type}"
                 # iterator for file chunks for streaming storage
                 chunk_iterator = resp.content.iter_chunks()
                 # save file
