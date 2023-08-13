@@ -59,7 +59,7 @@ class Handlers:
         if result:
             return web.Response(status=200)
 
-    async def get_server_info(self):
+    async def get_server_info(self, request: web.Request):
         data = {
             "name": await self.context.env.get("NAME"),
             "ip": await self.context.env.get("IP"),

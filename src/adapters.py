@@ -32,8 +32,10 @@ class WebClient(abstract.AWebClient):
         async with ClientSession() as session:
             async with session.get(link) as resp:
                 # get the file type based on the content-type
-                file_type = mimetypes.guess_extension(resp.content_type)[1:]
-                file_full_name = f"{file_name}.{file_type}"
+                file_type = mimetypes.guess_extension(resp.content_type)
+                # If file_type is None then the value is overridden with an empty string
+                file_type = file_type if file_type else ""
+                file_full_name = f"{file_name}{file_type}"
                 # iterator for file chunks for streaming storage
                 chunk_iterator = resp.content.iter_chunks()
                 # save file
@@ -51,7 +53,7 @@ class WebClient(abstract.AWebClient):
         :param file_info: file information
         :return: info about the server to which the file was sent
         """
-        file_name = f"{file_info.name}.{file_info.file_type}"
+        file_name = f"{file_info.name}{file_info.file_type}"
         # running the SCP command to transfer the file
         process = await asyncio.create_subprocess_exec(
             "scp",

@@ -73,7 +73,7 @@ async def send_saved_file_status(context: AContext, event: FileSavedEvent):
     files_url = await context.env.get("FILES_URL")
     status = event_to_dict(event, files_url)
     status["type"] = "saved"
-    status["server"] = get_current_server_data(context)
+    status["server"] = await get_current_server_data(context)
     await context.web.send_file_status(await context.env.get("ORIGIN_URL"), status)
 
 
@@ -86,7 +86,7 @@ async def send_replicated_file_status(context: AContext, event: FileReplicatedEv
     files_url = await context.env.get("FILES_URL")
     status = event_to_dict(event, files_url)
     status["type"] = "replicated"
-    status["from_server"] = get_current_server_data(context)
+    status["from_server"] = await get_current_server_data(context)
     status["to_server"] = asdict(event.server)
     await context.web.send_file_status(await context.env.get("ORIGIN_URL"), status)
 
@@ -107,7 +107,7 @@ def event_to_dict(event: FileProcessedEvent, files_url: str) -> dict:
     :param files_url: URL of the file servers domain
     :return: status in dict format
     """
-    file_name = f"{event.file_info.name}.{event.file_info.file_type}"
+    file_name = f"{event.file_info.name}{event.file_info.file_type}"
     status = asdict(event)
     status["file_url"] = f"{files_url}/files/{file_name}"
     status["time"] = event.time.strftime("%Y/%m/%d %H:%M:%S")
