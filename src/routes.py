@@ -14,6 +14,7 @@ def get_handlers(context: AContext) -> list[RouteDef]:
     return [
         web.post("/files/", handlers.download_file_from_link_handler),
         web.put("/files/", handlers.upload_file_handler),
+        web.get("", handlers.get_server_info),
     ]
 
 
@@ -50,9 +51,18 @@ class Handlers:
         return web.json_response(data, status=200)
 
     async def upload_file_handler(self, request: web.Request):
+        """Handler for the file replication request from another server."""
         file_name = request.headers["File-Name"]
         # get an iterator for file chunks
         iter_chunks = request.content.iter_chunks()
         result = await commands.save_file(self.context, file_name, iter_chunks)
         if result:
             return web.Response(status=200)
+
+    async def get_server_info(self):
+        data = {
+            "name": await self.context.env.get("NAME"),
+            "ip": await self.context.env.get("IP"),
+            "zone": await self.context.env.get("ZONE"),
+        }
+        return web.json_response(data, status=200)
