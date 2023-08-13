@@ -25,7 +25,7 @@ class EventManager(AEventManager):
         :param context: Context. Needed for method execution
         :param event: object of a child class of the Event class
         """
-        if type(event) in self.subscribers:
+        if isinstance(event, tuple(self.subscribers)):
             for callback in self.subscribers[type(event)]:
                 # launching a background asynchronous task for the event handler.
                 asyncio.create_task(callback(context, event))

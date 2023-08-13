@@ -9,20 +9,28 @@ from src.utils import get_unique_filename
 
 
 def get_handlers(context: AContext) -> list[RouteDef]:
+    """Binding handlers to paths."""
     handlers = Handlers(context)
     return [
         web.post("/files/", handlers.download_file_from_link_handler),
         web.put("/files/", handlers.upload_file_handler),
+        web.get("", handlers.get_server_info),
     ]
 
 
 class Handlers:
+    """
+    Class with request handlers.
+    This structure is designed so that handlers have access to the context through self.
+    """
+
     def __init__(self, context: AContext):
         self.context = context
 
     async def download_file_from_link_handler(self, request: web.Request):
+        """Download and save a file by URL"""
         # checking the presence of required fields
-        data = await request.post()
+        data = await request.json()
         link = data.get("link")
         if not link:
             raise web.HTTPBadRequest(reason="link is required.")
@@ -39,11 +47,22 @@ class Handlers:
                 self.context.files.save_file,
             )
         )
-        return web.Response(status=200)
+        data = {"file_name": file_name, "origin_url": link}
+        return web.json_response(data, status=200)
 
     async def upload_file_handler(self, request: web.Request):
-        result = await commands.save_file(
-            self.context, request.headers["File-Name"], request.content.iter_chunks()
-        )
+        """Handler for the file replication request from another server."""
+        file_name = request.headers["File-Name"]
+        # get an iterator for file chunks
+        iter_chunks = request.content.iter_chunks()
+        result = await commands.save_file(self.context, file_name, iter_chunks)
         if result:
             return web.Response(status=200)
+
+    async def get_server_info(self, request: web.Request):
+        data = {
+            "name": await self.context.env.get("NAME"),
+            "ip": await self.context.env.get("IP"),
+            "zone": await self.context.env.get("ZONE"),
+        }
+        return web.json_response(data, status=200)

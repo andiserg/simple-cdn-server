@@ -27,10 +27,6 @@ class AFileManager(ABC):
         pass
 
     @abstractmethod
-    async def get_chunk_iterator_factory(self, path: Path, chunk_size: int) -> Callable:
-        pass
-
-    @abstractmethod
     async def is_file_exists(self, file_dir: Path, file_name: str) -> bool:
         pass
 

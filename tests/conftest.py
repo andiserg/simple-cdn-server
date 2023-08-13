@@ -87,3 +87,9 @@ def delete_all_files(context):
     for filename in os.listdir(context.FILES_DIR):
         if filename != ".gitkeep":
             os.remove(context.FILES_DIR / filename)
+
+
+@pytest.fixture()
+def create_test_file(context):
+    with open(context.FILES_DIR / "test.txt", "wb") as f:
+        f.write(b"Hello world")

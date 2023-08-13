@@ -11,6 +11,8 @@ async def file_status_test_handler(request: web.Request):
 
 
 def init_test_app() -> web.Application:
+    """Creating a helper server for testing purposes."""
+
     app = web.Application()
     app.add_routes(
         [

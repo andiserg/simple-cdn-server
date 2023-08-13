@@ -1,7 +1,6 @@
 import asyncio
 import os
 from datetime import datetime
-from pathlib import Path
 
 import pytest
 
@@ -27,9 +26,13 @@ async def test_send_replicated_file_status_with_correct_data_return_status(
     fake_context,
 ):
     file = FileInfo(name="test", file_type="txt", origin_url="test")
-    server = Server(name="TestVPS", url="0.0.0.0", zone="test")
+    server = Server(name="TestVPS", ip="0.0.0.0", zone="test")
     event = FileReplicatedEvent(
-        file_info=file, duration=10, time=datetime.now(), server=server
+        file_info=file,
+        duration=10,
+        time=datetime.now(),
+        server=server,
+        is_last_server=True,
     )
     try:
         # method will pass the test if it executes without errors
@@ -64,14 +67,11 @@ async def test_event_manager_publish_with_handlers_should_process(fake_context):
 
 
 @pytest.mark.asyncio
-async def test_file_cleaner_with_file_should_delete(context):
-    with open(context.FILES_DIR / "test.txt", "wb") as f:
-        f.write(b"Hello, world")
-
+async def test_file_cleaner_with_file_should_delete(context, create_test_file):
     # start cleaner task
     task = asyncio.create_task(start_file_cleaner(context))
 
-    await asyncio.sleep(0.001)
+    await asyncio.sleep(0.1)
 
     # stop cleaner task
     task.cancel()
