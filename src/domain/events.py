@@ -23,3 +23,4 @@ class FileSavedEvent(FileProcessedEvent):
 @dataclass
 class FileReplicatedEvent(FileProcessedEvent):
     server: Server
+    is_last_server: bool
