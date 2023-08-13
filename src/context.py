@@ -6,6 +6,12 @@ from src.abstract.event_manager import AEventManager
 
 
 class Context(AContext):
+    """
+    The context holds all external tools for operation.
+    It implements an abstract class AContext upon which
+    both the service layer and infrastructure depend.
+    """
+
     def __init__(self, event_manager: AEventManager):
         self.web = adapters.WebClient()
         self.files = adapters.FileManager()

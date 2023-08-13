@@ -11,5 +11,5 @@ class FileInfo:
 @dataclass
 class Server:
     name: str
-    url: str
+    ip: str
     zone: str
