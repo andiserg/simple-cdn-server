@@ -111,8 +111,9 @@ class FileManager(abstract.AFileManager):
             mtime = datetime.fromtimestamp(mtime)
             if (now - mtime).seconds >= expiring_time:
                 old_files.append(file)
-        # remove the special git file from the list
-        old_files.remove(".gitkeep")
+        if ".gitkeep" in old_files:
+            # remove the special git file from the list
+            old_files.remove(".gitkeep")
         return old_files
 
     async def delete_files(self, files_dir: Path, files: list[str]):
