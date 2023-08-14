@@ -4,3 +4,4 @@ pytest-asyncio~=0.21.1
 pytest-aiohttp~=1.0.4
 aiofiles~=23.1.0
 pytest-env~=0.8.2
+gunicorn~=21.2.0
