@@ -2,6 +2,7 @@ import asyncio
 
 from aiohttp import web
 from aiohttp.web_routedef import RouteDef
+from aioping import ping
 
 from src.abstract.context import AContext
 from src.services import commands
@@ -14,7 +15,8 @@ def get_handlers(context: AContext) -> list[RouteDef]:
     return [
         web.post("/files/", handlers.download_file_from_link_handler),
         web.put("/files/", handlers.upload_file_handler),
-        web.get("", handlers.get_server_info),
+        web.get("", handlers.server_info),
+        web.get("/ping/", handlers.ping_to_host),
     ]
 
 
@@ -59,10 +61,30 @@ class Handlers:
         if result:
             return web.Response(status=200)
 
-    async def get_server_info(self, request: web.Request):
+    async def server_info(self, request: web.Request):
+        """Get current server info"""
         data = {
             "name": await self.context.env.get("NAME"),
             "ip": await self.context.env.get("IP"),
             "zone": await self.context.env.get("ZONE"),
         }
         return web.json_response(data, status=200)
+
+    async def ping_to_host(self, request: web.Request):
+        """Get the ping from the server to the host."""
+        link = request.query.get("host")
+        if not link:
+            raise web.HTTPBadRequest(reason="host is required.")
+
+        host_ping = None
+        while not host_ping:
+            # Some ping attempts fail with a "Network Unavailable" error.
+            # The code makes attempts until a response is received.
+            try:
+                host_ping = await ping(link)
+            except OSError as e:
+                if e.args == (-2, "Name or service not known"):
+                    raise web.HTTPBadRequest(reason="host is not valid.")
+                # Try ping again
+
+        return web.json_response({"ping": host_ping}, status=200)
