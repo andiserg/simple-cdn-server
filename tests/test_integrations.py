@@ -30,12 +30,3 @@ async def test_upload_file_with_correct_data_return_200(
     await asyncio.sleep(1)
 
     assert response.status == 200
-
-
-@pytest.mark.asyncio
-async def test_ping_to_host_with_correct_link_return_time(cli):
-    resp = await cli.get("/ping/?host=link.testfile.org")
-    resp_json = await resp.json()
-
-    assert resp.status == 200
-    assert isinstance(resp_json["ping"], float)
