@@ -5,3 +5,4 @@ pytest-aiohttp~=1.0.4
 aiofiles~=23.2.1
 pytest-env~=0.8.2
 pytest-cov~=4.1.0
+aioping~=0.4.0

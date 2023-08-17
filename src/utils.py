@@ -5,7 +5,7 @@ from random import choices
 from src.abstract.context import AContext
 
 
-async def get_unique_filename(context: AContext) -> str:
+async def unique_filename(context: AContext) -> str:
     filename = generate_filename()
     while await context.files.is_file_exists(context.FILES_DIR, filename):
         # If a file with that name already exists, generate a new one
