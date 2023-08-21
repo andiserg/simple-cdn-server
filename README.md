@@ -7,7 +7,7 @@
      <img src="https://codecov.io/gh/AndrewSergienko/simple-cdn-server/branch/master/graph/badge.svg?token=PHAIHK4J5U"/>
     </a>
     <img src="https://img.shields.io/badge/python-3.10-blue?logo=python" alt="Python Version">
-    <a>
+    <a href="https://github.com/AndrewSergienko/simple-cdn-server/actions">
         <img src="https://img.shields.io/badge/tests-passed-green?logo=github" alt="Actions">
     </a>
     <a href=https://results.pre-commit.ci/latest/github/AndrewSergienko/simple-cdn-server/master>
